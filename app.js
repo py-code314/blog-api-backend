@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import express from 'express'
+import cors from 'cors'
 
 /**
  * -------------- GENERAL SETUP ----------------
@@ -10,6 +11,8 @@ const app = express()
 // Express middleware 
 app.use(express.json()) // To read JSON data from client
 app.use(express.urlencoded({ extended: true })) // To parse URL encoded form data
+// TODO: Change cors set up later in production environment
+app.use(cors()) // Allow CORS
 
 /**
  * -------------- SERVER ----------------
