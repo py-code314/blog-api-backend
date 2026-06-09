@@ -5,10 +5,12 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon --exec babel-node app.js",
+    "studio": "npx prisma studio --config ./prisma.config.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write ."
+
   },
   "repository": {
     "type": "git",
@@ -31,11 +33,15 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.6.0",
     "nodemon": "^3.1.14",
-    "prettier": "3.8.3"
+    "prettier": "3.8.3",
+    "prisma": "^7.8.0"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pg": "^8.21.0"
   }
 }

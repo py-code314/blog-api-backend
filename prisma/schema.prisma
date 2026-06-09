@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/**
+ * Add models
+ */
+model User {
+  id           Int     @id @default(autoincrement())
+  email        String  @unique
+  name         String?
+  passwordHash String // Store encrypted passwords
+  role         Role    @default(USER)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  posts    Post[]
+  comments Comment[]
+  profile  Profile?
+
+  @@map("users")
+}
+
+model Profile {
+  id  Int     @id @default(autoincrement())
+  bio String?
+
+  // Relations
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @unique
+
+  @@map("profiles")
+}
+
+model Post {
+  id        Int     @id @default(autoincrement())
+  title     String
+  content   String
+  published Boolean @default(false)
+  imageUrl  String?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  categories Category[]
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId   Int
+  comments   Comment[]
+  tags       Tag[]
+
+  @@map("posts")
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  slug String @unique // URL safe category name
+
+  // Relations
+  posts Post[]
+
+  @@map("categories")
+}
+
+model Comment {
+  id      Int    @id @default(autoincrement())
+  content String
+
+  // Metadata
+  createdAt DateTime @default(now())
+
+  // Relations
+  author   User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId Int
+  post     Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   Int
+
+  @@map("comments")
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  slug String @unique // URL safe tag name
+
+  // Relations
+  posts Post[]
+
+  @@map("tags")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
