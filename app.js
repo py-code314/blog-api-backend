@@ -2,17 +2,25 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 
+import routes from './routes/index-routes.js'
+
 /**
  * -------------- GENERAL SETUP ----------------
  */
 
 const app = express()
 
-// Express middleware 
+// Express middleware
 app.use(express.json()) // To read JSON data from client
 app.use(express.urlencoded({ extended: true })) // To parse URL encoded form data
 // TODO: Change cors set up later in production environment
 app.use(cors()) // Allow CORS
+
+/**
+ * -------------- ROUTES ----------------
+ */
+
+app.use('/api/v1/signup', routes.signupRouter)
 
 /**
  * -------------- SERVER ----------------
@@ -26,6 +34,3 @@ app.listen(PORT, (error) => {
   }
   console.log(`Blog API App - listening on port ${PORT}!`)
 })
-
-// console.log('Hello ever running Node.js project.')
-// console.log(process.env.MY_SECRET)
