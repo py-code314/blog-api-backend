@@ -1,12 +1,10 @@
 import { Router } from 'express'
-
+import { sign_up_get } from '../controllers/auth-controller.js'
 
 const signupRouter = Router()
 
 /* Sign up routes */
-signupRouter.get('/', (req, res) => {
-  return res.send('GET HTTP method for signup')
-})
+signupRouter.get('/', sign_up_get)
 signupRouter.post('/', (req, res) => {
   return res.send('POST HTTP method for signup')
 })
