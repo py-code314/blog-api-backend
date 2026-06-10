@@ -22,6 +22,8 @@ app.use(cors()) // Allow CORS
 
 app.use('/api/v1/signup', routes.signupRouter)
 
+// TODO: Add error middleware
+
 /**
  * -------------- SERVER ----------------
  */
