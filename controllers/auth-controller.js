@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import { prisma } from '../lib/prisma.js'
 import { body, validationResult, matchedData } from 'express-validator'
+import databaseConnectionError from '../errors/database-error.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -100,12 +101,15 @@ const sign_up_post = [
 
     try {
       // Get validated form data
+      // const { email, name, password } = req.body
       const { email, name, password } = matchedData(req)
       const hashedPassword = await bcrypt.hash(password, 10)
+      // console.log('🚀 ~ hashedPassword:', hashedPassword)
 
       // TODO: Test errors
       // * db goes down
       // * network request fails
+      // throw new Error()
 
       // Add new user to db
       await prisma.user.create({
@@ -121,7 +125,15 @@ const sign_up_post = [
       })
     } catch (err) {
       // TODO: Add error middleware
-      console.error(err)
+      // console.error(err)
+      if (err.code === 'ECONNREFUSED') {
+        const dbError = new databaseConnectionError(
+          'Failed to connect to the database. Please try again later.'
+        )
+        // Pass the error to next() for older Express versions instead
+        // of just throwing the error
+        return next(dbError)
+      }
       return next(err)
     }
   },

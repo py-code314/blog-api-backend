@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 
 import routes from './routes/index-routes.js'
+import errorHandler from './middleware/error-handler.js'
 
 /**
  * -------------- GENERAL SETUP ----------------
@@ -23,6 +24,11 @@ app.use(cors()) // Allow CORS
 app.use('/api/v1/signup', routes.signupRouter)
 
 // TODO: Add error middleware
+/**
+ * -------------- ERROR HANDLER MIDDLEWARE ----------------
+ */
+
+app.use(errorHandler)
 
 /**
  * -------------- SERVER ----------------
