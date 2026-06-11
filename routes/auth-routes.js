@@ -1,10 +1,14 @@
 import { Router } from 'express'
-import { sign_up_get, sign_up_post } from '../controllers/auth-controller.js'
+import  * as controllers  from '../controllers/index-controller.js'
 
 const signupRouter = Router()
+const loginRouter = Router()
 
 /* Sign up routes */
-signupRouter.get('/', sign_up_get)
-signupRouter.post('/', sign_up_post)
+signupRouter.get('/', controllers.sign_up_get)
+signupRouter.post('/', controllers.sign_up_post)
 
-export default signupRouter
+/* Log in routes */
+loginRouter.get('/', controllers.log_in_get)
+
+export  {signupRouter, loginRouter}

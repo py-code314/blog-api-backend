@@ -1,3 +1,3 @@
-import signupRouter from './auth-routes.js'
+import {signupRouter, loginRouter} from './auth-routes.js'
 
-export default { signupRouter }
+export default { signupRouter, loginRouter }

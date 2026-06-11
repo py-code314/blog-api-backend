@@ -2,7 +2,7 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 
-import routes from './routes/index-routes.js'
+import * as routes from './routes/index-routes.js'
 import errorHandler from './middleware/error-handler.js'
 
 /**
@@ -22,6 +22,7 @@ app.use(cors()) // Allow CORS
  */
 
 app.use('/api/v1/signup', routes.signupRouter)
+app.use('/api/v1/login', routes.loginRouter)
 
 /**
  * -------------- ERROR HANDLER MIDDLEWARE ----------------
