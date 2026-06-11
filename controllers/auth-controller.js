@@ -80,7 +80,6 @@ const sign_up_post = [
 
   async (req, res, next) => {
     // Get form data except password
-    // console.log('req body:', req.body)
     const { email, name } = req.body
     const signupData = {
       email,
@@ -101,15 +100,8 @@ const sign_up_post = [
 
     try {
       // Get validated form data
-      // const { email, name, password } = req.body
       const { email, name, password } = matchedData(req)
       const hashedPassword = await bcrypt.hash(password, 10)
-      // console.log('🚀 ~ hashedPassword:', hashedPassword)
-
-      // TODO: Test errors
-      // * db goes down
-      // * network request fails
-      // throw new Error()
 
       // Add new user to db
       await prisma.user.create({
@@ -124,7 +116,6 @@ const sign_up_post = [
         message: 'User successfully added',
       })
     } catch (err) {
-      // TODO: Add error middleware
       // console.error(err)
       if (err.code === 'ECONNREFUSED') {
         const dbError = new databaseConnectionError(
