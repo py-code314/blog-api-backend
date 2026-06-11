@@ -67,6 +67,10 @@ const validateUser = [
     .withMessage('Passwords do not match.'),
 ]
 
+/**
+ * -------------- SIGN-UP ----------------
+ */
+
 /* Show sign up form */
 async function sign_up_get(req, res) {
   res.json({
@@ -130,4 +134,21 @@ const sign_up_post = [
   },
 ]
 
-export { sign_up_get, sign_up_post }
+/**
+ * -------------- LOG-IN ----------------
+ */
+
+/* Show log in form */
+async function log_in_get(req, res) {
+  // req.user = true
+  // User is already logged in
+  if (req.user) {
+    return res.json({ title: 'Home' })
+  }
+
+  res.json({
+    title: 'Log In',
+  })
+}
+
+export { sign_up_get, sign_up_post, log_in_get }
