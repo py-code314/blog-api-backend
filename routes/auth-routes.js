@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import  * as controllers  from '../controllers/index-controller.js'
+import * as controllers from '../controllers/index-controller.js'
 
 const signupRouter = Router()
 const loginRouter = Router()
@@ -10,5 +10,6 @@ signupRouter.post('/', controllers.sign_up_post)
 
 /* Log in routes */
 loginRouter.get('/', controllers.log_in_get)
+loginRouter.post('/', controllers.log_in_post)
 
-export  {signupRouter, loginRouter}
+export { signupRouter, loginRouter }

@@ -18,6 +18,12 @@ app.use(express.urlencoded({ extended: true })) // To parse URL encoded form dat
 app.use(cors()) // Allow CORS
 
 /**
+ * -------------- PASSPORT AUTHENTICATION ----------------
+ */
+
+import './config/passport.js'
+
+/**
  * -------------- ROUTES ----------------
  */
 

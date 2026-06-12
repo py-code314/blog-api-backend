@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs'
 import { prisma } from '../lib/prisma.js'
 import { body, validationResult, matchedData } from 'express-validator'
 import databaseConnectionError from '../errors/database-error.js'
+import passport from 'passport'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -13,7 +14,7 @@ const passwordInvalidErr =
 const alphaErr = 'must contain only letters.'
 
 /* Validate sign up form data */
-const validateUser = [
+const validateSignup = [
   body('email')
     .trim()
     .notEmpty()
@@ -67,6 +68,12 @@ const validateUser = [
     .withMessage('Passwords do not match.'),
 ]
 
+/* Validate log in data */
+const validateLogin = [
+  body('email').trim().notEmpty().withMessage(`Email ${emptyErr}`),
+  body('password').trim().notEmpty().withMessage(`Password ${emptyErr}`),
+]
+
 /**
  * -------------- SIGN-UP ----------------
  */
@@ -80,7 +87,7 @@ async function sign_up_get(req, res) {
 
 /* Validate and add new user */
 const sign_up_post = [
-  validateUser,
+  validateSignup,
 
   async (req, res, next) => {
     // Get form data except password
@@ -146,9 +153,68 @@ async function log_in_get(req, res) {
     return res.json({ title: 'Home' })
   }
 
+  console.log(req.session.message)
+
   res.json({
     title: 'Log In',
   })
 }
 
-export { sign_up_get, sign_up_post, log_in_get }
+/* Validate and authenticate user */
+const log_in_post = [
+  validateLogin,
+  async (req, res, next) => {
+    // Get email from form
+    const { email } = req.body
+
+    // Validate request
+    const errors = validationResult(req)
+
+    // Show errors if validation fails
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        title: 'Log-in',
+        user: { email },
+        errors: errors.array(),
+      })
+    }
+
+    /* Call passport.authenticate() inside controller function instead
+      of calling it in the route */
+    // Make sure it's not using sessions
+    /* CUSTOM CALLBACK
+     - can be called with 3 arguments
+     - sends error messages from Passport's verifyCallback() to the frontend
+     - generates JWT and sends it to the client
+    */
+    /* Invoke the function returned by authenticate function immediately
+     with req, res, next arguments */
+    passport.authenticate('local', { session: false }, (err, user, info) => {
+      // console.log('🚀 ~ err, user, info:', err, user, info)
+      if (err) {
+        next(err)
+      }
+
+      // Email or password doesn't match
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          title: 'Login',
+          user: { email },
+          errorMsg: info.message,
+        })
+      }
+
+      // Successful log-in
+      return res.json({
+        success: true,
+        title: 'Home',
+        msg: 'Successfully logged in',
+        // ? Send limited user info for security purpose
+        user,
+      })
+    })(req, res, next)
+  },
+]
+
+export { sign_up_get, sign_up_post, log_in_get, log_in_post }
