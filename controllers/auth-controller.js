@@ -3,6 +3,9 @@ import { prisma } from '../lib/prisma.js'
 import { body, validationResult, matchedData } from 'express-validator'
 import databaseConnectionError from '../errors/database-error.js'
 import passport from 'passport'
+// import { generateJWT } from '../utils/jwt.js'
+import jwt from 'jsonwebtoken'
+import 'dotenv/config'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -189,31 +192,61 @@ const log_in_post = [
     */
     /* Invoke the function returned by authenticate function immediately
      with req, res, next arguments */
-    passport.authenticate('local', { session: false }, (err, user, info) => {
-      // console.log('🚀 ~ err, user, info:', err, user, info)
-      if (err) {
-        next(err)
-      }
+    passport.authenticate(
+      'local',
+      { session: false },
+      async (err, user, info) => {
+        // console.log('🚀 ~ err, user, info:', err, user, info)
+        if (err) {
+          next(err)
+        }
 
-      // Email or password doesn't match
-      if (!user) {
-        return res.status(401).json({
-          success: false,
-          title: 'Login',
-          user: { email },
-          errorMsg: info.message,
-        })
-      }
+        // Email or password doesn't match
+        if (!user) {
+          return res.status(401).json({
+            success: false,
+            title: 'Login',
+            user: { email },
+            errorMsg: info.message,
+          })
+        }
 
-      // Successful log-in
-      return res.json({
-        success: true,
-        title: 'Home',
-        msg: 'Successfully logged in',
-        // ? Send limited user info for security purpose
-        user,
-      })
-    })(req, res, next)
+        // Don't add any mutable data to payload and keep it lean
+        // ? Should I add 'role: admin' to data
+        const userData = {
+          sub: user.id,
+        }
+        // Generate JWT asynchronous way
+        jwt.sign(
+          userData,
+          process.env.JWT_SECRET,
+          { expiresIn: '1d' },
+          (err, token) => {
+            // Handle error
+            if (err) {
+              return res.status(500).json({
+                success: false,
+                msg: 'Failed to generate authentication token. Please try again.',
+              })
+            }
+            // JWT successfully generated
+            // Filter user data for security
+            const safeUserData = {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+            }
+            return res.json({
+              success: true,
+              title: 'Home',
+              msg: 'Successfully logged in',
+              user: safeUserData,
+              token,
+            })
+          }
+        )
+      }
+    )(req, res, next)
   },
 ]
 
