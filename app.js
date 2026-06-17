@@ -29,6 +29,7 @@ import './config/passport.js'
 
 app.use('/api/v1/signup', routes.signupRouter)
 app.use('/api/v1/login', routes.loginRouter)
+app.use('/api/v1/posts', routes.postsRouter)
 
 /**
  * -------------- ERROR HANDLER MIDDLEWARE ----------------
