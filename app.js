@@ -21,7 +21,8 @@ app.use(cors()) // Allow CORS
  * -------------- PASSPORT AUTHENTICATION ----------------
  */
 
-import './config/passport.js'
+import './config/passport-local.js' // Local strategy for initial log-in
+import './config/passport-jwt.js' // JWT strategy for all subsequent log ins
 
 /**
  * -------------- ROUTES ----------------

@@ -1,9 +1,8 @@
 import bcrypt from 'bcryptjs'
 import { prisma } from '../lib/prisma.js'
 import { body, validationResult, matchedData } from 'express-validator'
-import databaseConnectionError from '../errors/database-error.js'
+import DatabaseConnectionError from '../errors/database-error.js'
 import passport from 'passport'
-// import { generateJWT } from '../utils/jwt.js'
 import jwt from 'jsonwebtoken'
 import 'dotenv/config'
 
@@ -132,7 +131,7 @@ const sign_up_post = [
     } catch (err) {
       // console.error(err)
       if (err.code === 'ECONNREFUSED') {
-        const dbError = new databaseConnectionError(
+        const dbError = new DatabaseConnectionError(
           'Failed to connect to the database. Please try again later.'
         )
         // Pass the error to next() for older Express versions instead
