@@ -8,8 +8,6 @@ postsRouter.use(isAuth)
 
 // New post routes
 postsRouter.get('/new', controllers.post_get)
-postsRouter.post('/new', (req, res) => {
-  res.send('Post a new blog post')
-})
+postsRouter.post('/new', controllers.post_post)
 
 export { postsRouter }
