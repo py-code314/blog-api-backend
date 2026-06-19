@@ -1,5 +1,6 @@
 import { body, validationResult, matchedData } from 'express-validator'
 import { prisma } from '../lib/prisma.js'
+import PostNotFoundError from '../errors/post-error.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -11,7 +12,7 @@ const validatePost = [
 ]
 
 /* Show blog post form */
-async function post_get(req, res) {
+async function getNewPostForm(req, res) {
   res.json({
     success: true,
     title: 'New Post',
@@ -20,7 +21,7 @@ async function post_get(req, res) {
 }
 
 /* Validate and create new blog post */
-const post_post = [
+const createNewPost = [
   validatePost,
 
   async (req, res, next) => {
@@ -50,7 +51,7 @@ const post_post = [
       const userId = req.user.id
 
       // Add post to db
-      const result = await prisma.post.create({
+      const post = await prisma.post.create({
         data: {
           title,
           content,
@@ -61,7 +62,7 @@ const post_post = [
       })
       return res.json({
         success: true,
-        result,
+        post,
       })
     } catch (err) {
       return next(err)
@@ -69,4 +70,41 @@ const post_post = [
   },
 ]
 
-export { post_get, post_post }
+async function getPostById(req, res, next) {
+  try {
+    const postId = parseInt(req.params.postId, 10)
+
+    // Make sure postId is a number
+    if (isNaN(postId)) {
+      const invalidPost = new PostNotFoundError(
+        "That doesn't look like a valid post link. Make sure you have the correct web address."
+      )
+      return next(invalidPost)
+    }
+
+    // Get post by id
+    const post = await prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+    })
+
+    // ? Should I throw error for update and delete too
+    // Throw error if post is not found
+    if (!post) {
+      const invalidPost = new PostNotFoundError(
+        'The post you are looking for no longer exists.'
+      )
+      return next(invalidPost)
+    }
+
+    res.json({
+      success: true,
+      post,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+export { getNewPostForm, createNewPost, getPostById }

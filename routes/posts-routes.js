@@ -6,8 +6,11 @@ const postsRouter = Router()
 // All Post routes are protected routes
 postsRouter.use(isAuth)
 
-// New post routes
-postsRouter.get('/new', controllers.post_get)
-postsRouter.post('/new', controllers.post_post)
+// Add new post
+postsRouter.get('/new', controllers.getNewPostForm)
+postsRouter.post('/new', controllers.createNewPost)
+
+// Show a specific post
+postsRouter.get('/:postId', controllers.getPostById)
 
 export { postsRouter }
