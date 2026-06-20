@@ -8,7 +8,8 @@ import {
   getNewPostForm,
   createNewPost,
   getPostById,
-  getEditPostForm
+  getEditPostForm,
+  updatePost
 } from './posts-controller.js'
 
 export {
@@ -19,5 +20,6 @@ export {
   getNewPostForm,
   createNewPost,
   getPostById,
-  getEditPostForm
+  getEditPostForm,
+  updatePost
 }

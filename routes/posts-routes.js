@@ -15,5 +15,6 @@ postsRouter.get('/:postId', controllers.getPostById)
 
 // Edit a specific post
 postsRouter.get('/:postId/update', controllers.getEditPostForm)
+postsRouter.put('/:postId/update', controllers.updatePost)
 
 export { postsRouter }

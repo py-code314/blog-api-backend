@@ -89,6 +89,7 @@ async function getPostById(req, res, next) {
         id: postId,
       },
     })
+    // console.log("🚀 ~ getPostById ~ post:", post)
 
     // ? Should I throw error for update and delete too
     // Throw error if post is not found
@@ -148,4 +149,80 @@ async function getEditPostForm(req, res, next) {
   }
 }
 
-export { getNewPostForm, createNewPost, getPostById, getEditPostForm }
+/* Validate and update a blog post */
+const updatePost = [
+  validatePost,
+
+  async (req, res, next) => {
+    console.log('update post running')
+    // Get form data
+    const { title, content } = req.body
+    const postData = {
+      title,
+      content,
+    }
+
+    // Validate request
+    const errors = validationResult(req)
+
+    // Show errors if validation fails
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        title: 'Edit Post',
+        postData,
+        errors: errors.array(),
+      })
+    }
+
+    try {
+      // Get validated form data
+      const { title, content } = matchedData(req)
+      const userId = req.user.id
+      const postId = parseInt(req.params.postId, 10)
+
+      // Make sure postId is a number
+      if (isNaN(postId)) {
+        const invalidPost = new PostNotFoundError(
+          "That doesn't look like a valid post link. Make sure you have the correct web address."
+        )
+        return next(invalidPost)
+      }
+
+      // Get post by post id and user id to make sure only author can edit it
+      const post = await prisma.post.update({
+        where: {
+          id: postId,
+          authorId: userId,
+        },
+        data: {
+          title,
+          content
+        }
+      })
+
+      res.json({
+        success: true,
+        title: 'Updated Post',
+        post,
+      })
+    } catch (err) {
+      // If post id or user id doesn't match it throws error with code P2025
+      if (err.code === 'P2025') {
+        const invalidPost = new PostNotFoundError(
+          'The post you are looking for no longer exists.'
+        )
+        return next(invalidPost)
+      }
+      return next(err)
+    }
+  },
+]
+
+export {
+  getNewPostForm,
+  createNewPost,
+  getPostById,
+  getEditPostForm,
+  updatePost,
+}
