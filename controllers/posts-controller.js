@@ -70,6 +70,7 @@ const createNewPost = [
   },
 ]
 
+/* Get a specific post by id */
 async function getPostById(req, res, next) {
   try {
     const postId = parseInt(req.params.postId, 10)
@@ -107,4 +108,44 @@ async function getPostById(req, res, next) {
   }
 }
 
-export { getNewPostForm, createNewPost, getPostById }
+/* Show blog post form for editing */
+async function getEditPostForm(req, res, next) {
+  try {
+    const userId = req.user.id
+    const postId = parseInt(req.params.postId, 10)
+
+    // Make sure postId is a number
+    if (isNaN(postId)) {
+      const invalidPost = new PostNotFoundError(
+        "That doesn't look like a valid post link. Make sure you have the correct web address."
+      )
+      return next(invalidPost)
+    }
+
+    // Get post by post id and user id to make sure only author can edit it
+    const post = await prisma.post.findUnique({
+      where: {
+        id: postId,
+        authorId: userId,
+      },
+    })
+
+    // Throw error if post is not found
+    if (!post) {
+      const invalidPost = new PostNotFoundError(
+        'The post you are looking for no longer exists.'
+      )
+      return next(invalidPost)
+    }
+
+    res.json({
+      success: true,
+      title: 'Edit Post',
+      post,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+export { getNewPostForm, createNewPost, getPostById, getEditPostForm }
