@@ -224,6 +224,7 @@ async function deletePost(req, res, next) {
   try {
     const userId = req.user.id
     const postId = parseInt(req.params.postId, 10)
+    const isAdmin = req.user.role === 'ADMIN'
 
     // Make sure postId is a number
     if (isNaN(postId)) {
@@ -233,20 +234,24 @@ async function deletePost(req, res, next) {
       return next(invalidPost)
     }
 
-    // Get post by post id and user id to make sure only author can delete it
+    // Check for admin status
+    const data = isAdmin
+      ? { id: postId }
+      : {
+          id: postId,
+          authorId: userId,
+        }
+
+    // Author and admin both can delete a post
     const post = await prisma.post.delete({
-      where: {
-        id: postId,
-        authorId: userId,
-      },
+      where: data,
     })
 
     return res.json({
       success: true,
       msg: 'Post successfully deleted',
-      post
+      post,
     })
-
   } catch (err) {
     // If post id or user id doesn't match it throws error with code P2025
     if (err.code === 'P2025') {

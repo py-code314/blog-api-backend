@@ -116,13 +116,20 @@ const sign_up_post = [
       const { email, name, password } = matchedData(req)
       const hashedPassword = await bcrypt.hash(password, 10)
 
+      const validSignupData = {
+        email,
+        name,
+        passwordHash: hashedPassword,
+      }
+
+      // Change role to Admin if email matches
+      if (email === process.env.ADMIN_EMAIL) {
+        validSignupData.role = 'ADMIN'
+      }
+
       // Add new user to db
       await prisma.user.create({
-        data: {
-          email,
-          name,
-          passwordHash: hashedPassword,
-        },
+        data: validSignupData
       })
 
       res.json({
@@ -211,7 +218,6 @@ const log_in_post = [
         }
 
         // Don't add any mutable data to payload and keep it lean
-        // ? Should I add 'role: admin' to data
         const userData = {
           sub: user.id,
         }
