@@ -31,6 +31,7 @@ import './config/passport-jwt.js' // JWT strategy for all subsequent log ins
 app.use('/api/v1/signup', routes.signupRouter)
 app.use('/api/v1/login', routes.loginRouter)
 app.use('/api/v1/posts', routes.postsRouter)
+app.use('/api/v1/comments', routes.commentsRouter)
 
 /**
  * -------------- ERROR HANDLER MIDDLEWARE ----------------
