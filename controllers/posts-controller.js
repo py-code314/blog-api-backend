@@ -154,7 +154,7 @@ const updatePost = [
   validatePost,
 
   async (req, res, next) => {
-    console.log('update post running')
+    // console.log('update post running')
     // Get form data
     const { title, content } = req.body
     const postData = {
@@ -197,8 +197,8 @@ const updatePost = [
         },
         data: {
           title,
-          content
-        }
+          content,
+        },
       })
 
       res.json({
@@ -210,7 +210,7 @@ const updatePost = [
       // If post id or user id doesn't match it throws error with code P2025
       if (err.code === 'P2025') {
         const invalidPost = new PostNotFoundError(
-          'The post you are looking for no longer exists.'
+          'The post you want to update no longer exists.'
         )
         return next(invalidPost)
       }
@@ -219,10 +219,51 @@ const updatePost = [
   },
 ]
 
+/* Delete post by id */
+async function deletePost(req, res, next) {
+  try {
+    const userId = req.user.id
+    const postId = parseInt(req.params.postId, 10)
+
+    // Make sure postId is a number
+    if (isNaN(postId)) {
+      const invalidPost = new PostNotFoundError(
+        "That doesn't look like a valid post link. Make sure you have the correct web address."
+      )
+      return next(invalidPost)
+    }
+
+    // Get post by post id and user id to make sure only author can delete it
+    const post = await prisma.post.delete({
+      where: {
+        id: postId,
+        authorId: userId,
+      },
+    })
+
+    return res.json({
+      success: true,
+      msg: 'Post successfully deleted',
+      post
+    })
+
+  } catch (err) {
+    // If post id or user id doesn't match it throws error with code P2025
+    if (err.code === 'P2025') {
+      const invalidPost = new PostNotFoundError(
+        'The post you want to delete no longer exists.'
+      )
+      return next(invalidPost)
+    }
+    return next(err)
+  }
+}
+
 export {
   getNewPostForm,
   createNewPost,
   getPostById,
   getEditPostForm,
   updatePost,
+  deletePost,
 }

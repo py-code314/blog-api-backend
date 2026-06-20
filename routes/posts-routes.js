@@ -13,8 +13,11 @@ postsRouter.post('/new', controllers.createNewPost)
 // Show a specific post
 postsRouter.get('/:postId', controllers.getPostById)
 
-// Edit a specific post
+// Update a specific post
 postsRouter.get('/:postId/update', controllers.getEditPostForm)
 postsRouter.put('/:postId/update', controllers.updatePost)
+
+// Delete a post
+postsRouter.delete('/:postId/delete', controllers.deletePost)
 
 export { postsRouter }

@@ -9,7 +9,8 @@ import {
   createNewPost,
   getPostById,
   getEditPostForm,
-  updatePost
+  updatePost,
+  deletePost
 } from './posts-controller.js'
 
 export {
@@ -21,5 +22,6 @@ export {
   createNewPost,
   getPostById,
   getEditPostForm,
-  updatePost
+  updatePost,
+  deletePost
 }
