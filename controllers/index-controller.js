@@ -12,6 +12,9 @@ import {
   updatePost,
   deletePost
 } from './posts-controller.js'
+import {
+  getNewCommentForm
+} from './comments-controller.js'
 
 export {
   sign_up_get,
@@ -23,5 +26,6 @@ export {
   getPostById,
   getEditPostForm,
   updatePost,
-  deletePost
+  deletePost,
+  getNewCommentForm,
 }

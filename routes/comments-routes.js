@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import * as controllers from '../controllers/index-controller.js'
 import { isAuth } from '../middleware/auth.js'
 
 const commentsRouter = Router()
@@ -6,8 +7,6 @@ const commentsRouter = Router()
 commentsRouter.use(isAuth)
 
 // Add new comment
-commentsRouter.get('/new', (req, res) => {
-  res.json({msg: 'Get form to add a comment'})
-})
+commentsRouter.get('/new', controllers.getNewCommentForm)
 
 export {commentsRouter}
