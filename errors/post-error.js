@@ -9,3 +9,5 @@ class PostNotFoundError extends Error {
 }
 
 export default PostNotFoundError
+
+// TODO: Can safely delete this error class

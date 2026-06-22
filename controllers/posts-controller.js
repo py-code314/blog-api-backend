@@ -89,9 +89,7 @@ async function getPostById(req, res, next) {
         id: postId,
       },
     })
-    // console.log("🚀 ~ getPostById ~ post:", post)
 
-    // ? Should I throw error for update and delete too
     // Throw error if post is not found
     if (!post) {
       const invalidPost = new PostNotFoundError(
@@ -108,7 +106,7 @@ async function getPostById(req, res, next) {
     return next(err)
   }
 }
-
+ // TODO: Change findUnique to findFirst
 /* Show blog post form for editing */
 async function getEditPostForm(req, res, next) {
   try {
@@ -122,7 +120,7 @@ async function getEditPostForm(req, res, next) {
       )
       return next(invalidPost)
     }
-
+   
     // Get post by post id and user id to make sure only author can edit it
     const post = await prisma.post.findUnique({
       where: {

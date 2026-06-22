@@ -10,4 +10,9 @@ commentsRouter.use(isAuth)
 commentsRouter.get('/new', controllers.getNewCommentForm)
 commentsRouter.post('/new', controllers.createNewComment)
 
+// * Add route to get a specific comment later if needed
+
+// Update a specific post
+commentsRouter.get('/:commentId/update', controllers.getEditCommentForm)
+
 export { commentsRouter }
