@@ -1,6 +1,9 @@
 import { body, validationResult, matchedData } from 'express-validator'
 import { prisma } from '../lib/prisma.js'
-import PostNotFoundError from '../errors/post-error.js'
+// import PostNotFoundError from '../errors/post-error.js'
+import RecordNotFoundError from '../errors/resource-error.js'
+import BadRequestError from '../errors/request-error.js'
+import AuthorizationError from '../errors/authorization-error.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -77,10 +80,10 @@ async function getPostById(req, res, next) {
 
     // Make sure postId is a number
     if (isNaN(postId)) {
-      const invalidPost = new PostNotFoundError(
-        "That doesn't look like a valid post link. Make sure you have the correct web address."
+      const badRequest = new BadRequestError(
+        'The web address looks invalid. Please check the URL and try again.'
       )
-      return next(invalidPost)
+      return next(badRequest)
     }
 
     // Get post by id
@@ -92,7 +95,7 @@ async function getPostById(req, res, next) {
 
     // Throw error if post is not found
     if (!post) {
-      const invalidPost = new PostNotFoundError(
+      const invalidPost = new RecordNotFoundError(
         'The post you are looking for no longer exists.'
       )
       return next(invalidPost)
@@ -106,7 +109,7 @@ async function getPostById(req, res, next) {
     return next(err)
   }
 }
- // TODO: Change findUnique to findFirst
+// TODO: Refactor code and errors
 /* Show blog post form for editing */
 async function getEditPostForm(req, res, next) {
   try {
@@ -115,26 +118,33 @@ async function getEditPostForm(req, res, next) {
 
     // Make sure postId is a number
     if (isNaN(postId)) {
-      const invalidPost = new PostNotFoundError(
-        "That doesn't look like a valid post link. Make sure you have the correct web address."
+      const badRequest = new BadRequestError(
+        'The web address looks invalid. Please check the URL and try again.'
       )
-      return next(invalidPost)
+      return next(badRequest)
     }
-   
-    // Get post by post id and user id to make sure only author can edit it
+
+    // Get post by id
     const post = await prisma.post.findUnique({
       where: {
         id: postId,
-        authorId: userId,
       },
     })
 
-    // Throw error if post is not found
+    // Post is not found
     if (!post) {
-      const invalidPost = new PostNotFoundError(
-        'The post you are looking for no longer exists.'
+      const invalidPost = new RecordNotFoundError(
+        'The post you want to edit no longer exists.'
       )
       return next(invalidPost)
+    }
+
+    // User isn't the author
+    if (post.authorId !== userId) {
+      const invalidUser = new AuthorizationError(
+        'You do not have permission to edit this post.'
+      )
+      return next(invalidUser)
     }
 
     res.json({
@@ -181,10 +191,10 @@ const updatePost = [
 
       // Make sure postId is a number
       if (isNaN(postId)) {
-        const invalidPost = new PostNotFoundError(
-          "That doesn't look like a valid post link. Make sure you have the correct web address."
+        const badRequest = new BadRequestError(
+          'The web address looks invalid. Please check the URL and try again.'
         )
-        return next(invalidPost)
+        return next(badRequest)
       }
 
       // Get post by post id and user id to make sure only author can edit it
@@ -207,7 +217,7 @@ const updatePost = [
     } catch (err) {
       // If post id or user id doesn't match it throws error with code P2025
       if (err.code === 'P2025') {
-        const invalidPost = new PostNotFoundError(
+        const invalidPost = new RecordNotFoundError(
           'The post you want to update no longer exists.'
         )
         return next(invalidPost)
@@ -226,38 +236,45 @@ async function deletePost(req, res, next) {
 
     // Make sure postId is a number
     if (isNaN(postId)) {
-      const invalidPost = new PostNotFoundError(
-        "That doesn't look like a valid post link. Make sure you have the correct web address."
+      const badRequest = new BadRequestError(
+        'The web address looks invalid. Please check the URL and try again.'
+      )
+      return next(badRequest)
+    }
+
+    // Fetch post by id
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+    })
+
+    // Post is not found
+    if (!post) {
+      const invalidPost = new RecordNotFoundError(
+        'The post you want to delete no longer exists.'
       )
       return next(invalidPost)
     }
 
-    // Check for admin status
-    const data = isAdmin
-      ? { id: postId }
-      : {
-          id: postId,
-          authorId: userId,
-        }
+    // Only author and admin can delete a post
+    const isAuthor = post.authorId === userId
+    if (!isAdmin && !isAuthor) {
+      const invalidUser = new AuthorizationError(
+        'You do not have permission to delete this comment.'
+      )
+      return next(invalidUser)
+    }
 
-    // Author and admin both can delete a post
-    const post = await prisma.post.delete({
-      where: data,
+    // Delete post by id
+    const deletedPost = await prisma.post.delete({
+      where: { id: postId },
     })
 
     return res.json({
       success: true,
       msg: 'Post successfully deleted',
-      post,
+      deletedPost,
     })
   } catch (err) {
-    // If post id or user id doesn't match it throws error with code P2025
-    if (err.code === 'P2025') {
-      const invalidPost = new PostNotFoundError(
-        'The post you want to delete no longer exists.'
-      )
-      return next(invalidPost)
-    }
     return next(err)
   }
 }

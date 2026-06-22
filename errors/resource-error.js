@@ -1,4 +1,4 @@
-/* Throw custom error if post is not found */
+/* Throw custom error if a resource is not found */
 class RecordNotFoundError extends Error {
   constructor(message) {
     super(message)
