@@ -59,6 +59,7 @@ const createNewComment = [
           },
         },
       })
+      // ? Catch PrismaClientValidationError if any id is missing in the query
       return res.json({
         success: true,
         comment,
@@ -125,4 +126,74 @@ async function getEditCommentForm(req, res, next) {
   }
 }
 
-export { getNewCommentForm, createNewComment, getEditCommentForm }
+/* Validate and update a comment */
+const updateComment = [
+  validateComment,
+
+  async (req, res, next) => {
+    // Get form data
+    const { content } = req.body
+
+    // Validate request
+    const errors = validationResult(req)
+
+    // Show errors if validation fails
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        title: 'Edit Comment',
+        comment: { content },
+        errors: errors.array(),
+      })
+    }
+
+    try {
+      // Get validated form data
+      const { content } = matchedData(req)
+      const userId = req.user.id
+      const postId = parseInt(req.params.postId, 10)
+      const commentId = parseInt(req.params.commentId, 10)
+
+      // Make sure postId and commentId are numbers
+      if (isNaN(postId) || isNaN(commentId)) {
+        const badRequest = new BadRequestError(
+          'The web address looks invalid. Please check the URL and try again.'
+        )
+        return next(badRequest)
+      }
+
+      // Get comment by comment id and user id to make sure only author can edit it
+      const comment = await prisma.comment.update({
+        where: {
+          id: commentId,
+          authorId: userId,
+        },
+        data: {
+          content,
+        },
+      })
+
+      res.json({
+        success: true,
+        title: 'Updated Comment',
+        comment,
+      })
+    } catch (err) {
+      // If comment id or user id doesn't match it throws error with code P2025
+      if (err.code === 'P2025') {
+        const invalidComment = new RecordNotFoundError(
+          'The comment you want to update no longer exists.'
+        )
+        return next(invalidComment)
+      }
+      return next(err)
+    }
+  },
+]
+
+export {
+  getNewCommentForm,
+  createNewComment,
+  getEditCommentForm,
+  updateComment,
+}

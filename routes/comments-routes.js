@@ -12,7 +12,8 @@ commentsRouter.post('/new', controllers.createNewComment)
 
 // * Add route to get a specific comment later if needed
 
-// Update a specific post
+// Update a specific comment
 commentsRouter.get('/:commentId/update', controllers.getEditCommentForm)
+commentsRouter.put('/:commentId/update', controllers.updateComment)
 
 export { commentsRouter }
