@@ -1,6 +1,8 @@
 import { body, validationResult, matchedData } from 'express-validator'
 import { prisma } from '../lib/prisma.js'
 import RecordNotFoundError from '../errors/resource-error.js'
+import AuthorizationError from '../errors/authorization-error.js'
+import BadRequestError from '../errors/request-error.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -76,28 +78,41 @@ async function getEditCommentForm(req, res, next) {
 
     // Make sure postId and commentId are numbers
     if (isNaN(postId) || isNaN(commentId)) {
-      const invalidUrl = new RecordNotFoundError(
+      const badRequest = new BadRequestError(
         'The web address looks invalid. Please check the URL and try again.'
       )
-      return next(invalidUrl)
+      return next(badRequest)
     }
 
-    /* Only author should be able to edit the comment and it 
-     must belong to the specified post */
-    const comment = await prisma.comment.findFirst({
+    // Fetch comment by id
+    const comment = await prisma.comment.findUnique({
       where: {
         id: commentId,
-        postId: postId,
-        authorId: userId,
       },
     })
 
-    // Throw error if comment is not found
+    // Comment is not found
     if (!comment) {
       const invalidComment = new RecordNotFoundError(
-        'The web address looks invalid. Please check the URL and try again.'
+        'The comment you want to edit no longer exists.'
       )
       return next(invalidComment)
+    }
+
+    // Comment doesn't belong to the specific post
+    if (comment.postId !== postId) {
+      const badRequest = new BadRequestError(
+        'The web address looks invalid. Please check the URL and try again.'
+      )
+      return next(badRequest)
+    }
+
+    // User isn't the author
+    if (comment.authorId !== userId) {
+      const invalidUser = new AuthorizationError(
+        'You do not have permission to edit this comment.'
+      )
+      return next(invalidUser)
     }
 
     res.json({
