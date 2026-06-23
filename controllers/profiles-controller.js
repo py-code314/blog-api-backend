@@ -1,3 +1,19 @@
+import { body, validationResult, matchedData } from 'express-validator'
+import { prisma } from '../lib/prisma.js'
+import BadRequestError from '../errors/request-error.js'
+
+/* Error messages */
+const emptyErr = 'can not be empty.'
+
+/* Validate new profile */
+const validateProfile = [
+  body('bio')
+    .trim()
+    .optional({ values: 'falsy' })
+    .notEmpty()
+    .withMessage(`Profile content ${emptyErr}`),
+]
+
 /* Show profile form */
 async function getNewProfileForm(req, res) {
   res.json({
@@ -7,4 +23,54 @@ async function getNewProfileForm(req, res) {
   })
 }
 
-export {getNewProfileForm}
+/* Validate and create new profile */
+const createNewProfile = [
+  validateProfile,
+
+  async (req, res, next) => {
+    // Get form data
+    const { bio } = req.body
+
+    // Validate request
+    const errors = validationResult(req)
+
+    // Show errors if validation fails
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        title: 'New Profile',
+        profile: {bio},
+        errors: errors.array(),
+      })
+    }
+
+    try {
+      // Get validated form data
+      const { bio } = matchedData(req)
+      const userId = req.user.id
+
+      // Add profile to db
+      const profile = await prisma.profile.create({
+        data: {
+          bio,
+          user: {
+            connect: { id: userId },
+          },
+        },
+      })
+      return res.json({
+        success: true,
+        profile,
+      })
+    } catch (err) {
+      if (err.code === 'P2025') {
+        const badRequest = new BadRequestError(
+          'The web address looks invalid. Please check the URL and try again.'
+        )
+        return next(badRequest)
+      }
+      return next(err)
+    }
+  },
+]
+export { getNewProfileForm, createNewProfile }

@@ -8,5 +8,6 @@ profilesRouter.use(isAuth)
 
 // Add new profile
 profilesRouter.get('/new', controllers.getNewProfileForm)
+profilesRouter.post('/new', controllers.createNewProfile)
 
 export { profilesRouter }
