@@ -191,9 +191,63 @@ const updateComment = [
   },
 ]
 
+/* Delete comment by id */
+async function deleteComment(req, res, next) {
+  try {
+    const userId = req.user.id
+    const postId = parseInt(req.params.postId, 10)
+    const commentId = parseInt(req.params.commentId, 10)
+    const isAdmin = req.user.role === 'ADMIN'
+
+    // Make sure postId and commentId are numbers
+    if (isNaN(postId) || isNaN(commentId)) {
+      const badRequest = new BadRequestError(
+        'The web address looks invalid. Please check the URL and try again.'
+      )
+      return next(badRequest)
+    }
+
+    // Fetch comment by id
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+    })
+
+    // Comment not found
+    if (!comment) {
+      const invalidComment = new RecordNotFoundError(
+        'The comment you want to delete no longer exists.'
+      )
+      return next(invalidComment)
+    }
+
+    // Only author and admin can delete a comment
+    const isAuthor = comment.authorId === userId
+    if (!isAdmin && !isAuthor) {
+      const invalidUser = new AuthorizationError(
+        'You do not have permission to delete this comment.'
+      )
+      return next(invalidUser)
+    }
+
+    // Delete comment by id
+    const deletedComment = await prisma.comment.delete({
+      where: { id: commentId },
+    })
+
+    return res.json({
+      success: true,
+      msg: 'Comment successfully deleted',
+      deletedComment,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 export {
   getNewCommentForm,
   createNewComment,
   getEditCommentForm,
   updateComment,
+  deleteComment,
 }

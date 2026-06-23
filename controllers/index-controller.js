@@ -16,7 +16,8 @@ import {
   getNewCommentForm,
   createNewComment,
   getEditCommentForm,
-  updateComment
+  updateComment,
+  deleteComment
 } from './comments-controller.js'
 
 export {
@@ -33,5 +34,6 @@ export {
   getNewCommentForm,
   createNewComment,
   getEditCommentForm,
-  updateComment
+  updateComment,
+  deleteComment
 }
