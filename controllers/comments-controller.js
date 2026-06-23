@@ -45,7 +45,8 @@ const createNewComment = [
       // Get validated form data
       const { content } = matchedData(req)
       const userId = req.user.id
-      const postId = parseInt(req.params.postId, 10)
+      const postId = Number(req.params.postId)
+      // const isInt = Number.isInteger(postId)
 
       // Add comment to db
       const comment = await prisma.comment.create({
@@ -81,11 +82,13 @@ const createNewComment = [
 async function getEditCommentForm(req, res, next) {
   try {
     const userId = req.user.id
-    const postId = parseInt(req.params.postId, 10)
-    const commentId = parseInt(req.params.commentId, 10)
+    const postId = Number(req.params.postId)
+    const isPostInt = Number.isInteger(postId)
+    const commentId = Number(req.params.commentId)
+    const isCommentInt = Number.isInteger(commentId)
 
     // Make sure postId and commentId are numbers
-    if (isNaN(postId) || isNaN(commentId)) {
+    if (!isPostInt || !isCommentInt) {
       const badRequest = new BadRequestError(
         'The web address looks invalid. Please check the URL and try again.'
       )
@@ -158,11 +161,13 @@ const updateComment = [
       // Get validated form data
       const { content } = matchedData(req)
       const userId = req.user.id
-      const postId = parseInt(req.params.postId, 10)
-      const commentId = parseInt(req.params.commentId, 10)
+      const postId = Number(req.params.postId)
+      const isPostInt = Number.isInteger(postId)
+      const commentId = Number(req.params.commentId)
+      const isCommentInt = Number.isInteger(commentId)
 
       // Make sure postId and commentId are numbers
-      if (isNaN(postId) || isNaN(commentId)) {
+      if (!isPostInt || !isCommentInt) {
         const badRequest = new BadRequestError(
           'The web address looks invalid. Please check the URL and try again.'
         )
@@ -202,12 +207,14 @@ const updateComment = [
 async function deleteComment(req, res, next) {
   try {
     const userId = req.user.id
-    const postId = parseInt(req.params.postId, 10)
-    const commentId = parseInt(req.params.commentId, 10)
+    const postId = Number(req.params.postId)
+    const isPostInt = Number.isInteger(postId)
+    const commentId = Number(req.params.commentId)
+    const isCommentInt = Number.isInteger(commentId)
     const isAdmin = req.user.role === 'ADMIN'
 
     // Make sure postId and commentId are numbers
-    if (isNaN(postId) || isNaN(commentId)) {
+    if (!isPostInt || !isCommentInt) {
       const badRequest = new BadRequestError(
         'The web address looks invalid. Please check the URL and try again.'
       )

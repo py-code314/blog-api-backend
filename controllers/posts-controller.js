@@ -82,10 +82,11 @@ const createNewPost = [
 /* Get a specific post by id */
 async function getPostById(req, res, next) {
   try {
-    const postId = parseInt(req.params.postId, 10)
+    const postId = Number(req.params.postId)
+    const isInt = Number.isInteger(postId)
 
     // Make sure postId is a number
-    if (isNaN(postId)) {
+    if (!isInt) {
       const badRequest = new BadRequestError(
         'The web address looks invalid. Please check the URL and try again.'
       )
@@ -120,10 +121,11 @@ async function getPostById(req, res, next) {
 async function getEditPostForm(req, res, next) {
   try {
     const userId = req.user.id
-    const postId = parseInt(req.params.postId, 10)
+    const postId = Number(req.params.postId)
+    const isInt = Number.isInteger(postId)
 
     // Make sure postId is a number
-    if (isNaN(postId)) {
+    if (!isInt) {
       const badRequest = new BadRequestError(
         'The web address looks invalid. Please check the URL and try again.'
       )
@@ -193,10 +195,11 @@ const updatePost = [
       // Get validated form data
       const { title, content } = matchedData(req)
       const userId = req.user.id
-      const postId = parseInt(req.params.postId, 10)
+      const postId = Number(req.params.postId)
+      const isInt = Number.isInteger(postId)
 
       // Make sure postId is a number
-      if (isNaN(postId)) {
+      if (!isInt) {
         const badRequest = new BadRequestError(
           'The web address looks invalid. Please check the URL and try again.'
         )
@@ -237,11 +240,12 @@ const updatePost = [
 async function deletePost(req, res, next) {
   try {
     const userId = req.user.id
-    const postId = parseInt(req.params.postId, 10)
+    const postId = Number(req.params.postId)
+    const isInt = Number.isInteger(postId)
     const isAdmin = req.user.role === 'ADMIN'
 
     // Make sure postId is a number
-    if (isNaN(postId)) {
+    if (!isInt) {
       const badRequest = new BadRequestError(
         'The web address looks invalid. Please check the URL and try again.'
       )

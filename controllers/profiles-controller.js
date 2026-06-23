@@ -79,11 +79,12 @@ const createNewProfile = [
 /* Get a profile by id */
 async function getProfileById(req, res, next) {
   try {
-    const profileId = parseInt(req.params.profileId, 10)
-    // const userId = req.user.id
+    const profileId = Number(req.params.profileId)
+    const isInt = Number.isInteger(profileId)
+
 
     // Make sure profileId is a number
-    if (isNaN(profileId)) {
+    if (!isInt) {
       const badRequest = new BadRequestError(
         'The web address looks invalid. Please check the URL and try again.'
       )
