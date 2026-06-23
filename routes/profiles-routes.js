@@ -1,0 +1,14 @@
+import { Router } from 'express'
+import * as controllers from '../controllers/index-controller.js'
+import { isAuth } from '../middleware/auth.js'
+
+const profilesRouter = Router()
+// All Profile routes are protected routes
+profilesRouter.use(isAuth)
+
+// Add new profile
+profilesRouter.get('/new', (req, res) => {
+  res.json({msg: 'Get route to get profile form'})
+})
+
+export { profilesRouter }
