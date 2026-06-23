@@ -59,12 +59,19 @@ const createNewComment = [
           },
         },
       })
-      // ? Catch PrismaClientValidationError if any id is missing in the query
+
       return res.json({
         success: true,
         comment,
       })
     } catch (err) {
+      // If post id or user id doesn't match it throws error with code P2025
+      if (err.code === 'P2025') {
+        const badRequest = new BadRequestError(
+          'The web address looks invalid. Please check the URL and try again.'
+        )
+        return next(badRequest)
+      }
       return next(err)
     }
   },

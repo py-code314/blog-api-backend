@@ -68,6 +68,12 @@ const createNewPost = [
         post,
       })
     } catch (err) {
+      if (err.code === 'P2025') {
+        const badRequest = new BadRequestError(
+          'The web address looks invalid. Please check the URL and try again.'
+        )
+        return next(badRequest)
+      }
       return next(err)
     }
   },
