@@ -7,10 +7,14 @@ const profilesRouter = Router()
 profilesRouter.use(isAuth)
 
 // Add new profile
+// ? Do I need get route to show an empty form. Isn't it already in frontend
 profilesRouter.get('/new', controllers.getNewProfileForm)
 profilesRouter.post('/new', controllers.createNewProfile)
 
 // Show a specific profile
 profilesRouter.get('/:profileId', controllers.getProfileById)
+
+// Update a specific profile
+profilesRouter.get('/:profileId/update', controllers.getEditProfileForm)
 
 export { profilesRouter }
