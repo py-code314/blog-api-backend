@@ -7,8 +7,6 @@ const profilesRouter = Router()
 profilesRouter.use(isAuth)
 
 // Add new profile
-profilesRouter.get('/new', (req, res) => {
-  res.json({msg: 'Get route to get profile form'})
-})
+profilesRouter.get('/new', controllers.getNewProfileForm)
 
 export { profilesRouter }

@@ -17,8 +17,10 @@ import {
   createNewComment,
   getEditCommentForm,
   updateComment,
-  deleteComment
+  deleteComment,
+  
 } from './comments-controller.js'
+import {getNewProfileForm} from './profiles-controller.js'
 
 export {
   sign_up_get,
@@ -35,5 +37,6 @@ export {
   createNewComment,
   getEditCommentForm,
   updateComment,
-  deleteComment
+  deleteComment,
+  getNewProfileForm
 }
