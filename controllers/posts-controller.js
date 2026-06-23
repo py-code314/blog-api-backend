@@ -170,7 +170,6 @@ const updatePost = [
   validatePost,
 
   async (req, res, next) => {
-    // console.log('update post running')
     // Get form data
     const { title, content } = req.body
     const postData = {

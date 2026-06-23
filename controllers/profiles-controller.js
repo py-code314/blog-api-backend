@@ -7,7 +7,7 @@ import AuthorizationError from '../errors/authorization-error.js'
 /* Error messages */
 const emptyErr = 'can not be empty.'
 
-/* Validate new profile */
+/* Validate profile data */
 const validateProfile = [
   body('bio')
     .trim()
@@ -41,7 +41,7 @@ const createNewProfile = [
       return res.status(400).json({
         success: false,
         title: 'New Profile',
-        profile: {bio},
+        profile: { bio },
         errors: errors.array(),
       })
     }
@@ -81,7 +81,6 @@ async function getProfileById(req, res, next) {
   try {
     const profileId = Number(req.params.profileId)
     const isInt = Number.isInteger(profileId)
-
 
     // Make sure profileId is a number
     if (!isInt) {
@@ -166,9 +165,74 @@ async function getEditProfileForm(req, res, next) {
   }
 }
 
+/* Validate and update a profile */
+const updateProfile = [
+  validateProfile,
+
+  async (req, res, next) => {
+    // Get form data
+    const { bio } = req.body
+
+    // Validate request
+    const errors = validationResult(req)
+
+    // Show errors if validation fails
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        profile: { bio },
+        errors: errors.array(),
+      })
+    }
+
+    try {
+      // Get validated form data
+      const { bio } = matchedData(req)
+      const userId = req.user.id
+      const profileId = Number(req.params.profileId)
+      const isInt = Number.isInteger(profileId)
+
+      // Make sure profileId is a number
+      if (!isInt) {
+        const badRequest = new BadRequestError(
+          'The web address looks invalid. Please check the URL and try again.'
+        )
+        return next(badRequest)
+      }
+
+      // Get profile by profile id and user id to make sure only author can edit it
+      const profile = await prisma.profile.update({
+        where: {
+          id: profileId,
+          userId: userId,
+        },
+        data: {
+          bio,
+        },
+      })
+
+      res.json({
+        success: true,
+        title: 'Updated Post',
+        profile,
+      })
+    } catch (err) {
+      // If profile id or user id doesn't match it throws error with code P2025
+      if (err.code === 'P2025') {
+        const invalidProfile = new RecordNotFoundError(
+          'The profile you want to update no longer exists.'
+        )
+        return next(invalidProfile)
+      }
+      return next(err)
+    }
+  },
+]
+
 export {
   getNewProfileForm,
   createNewProfile,
   getProfileById,
   getEditProfileForm,
+  updateProfile,
 }

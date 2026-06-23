@@ -16,5 +16,6 @@ profilesRouter.get('/:profileId', controllers.getProfileById)
 
 // Update a specific profile
 profilesRouter.get('/:profileId/update', controllers.getEditProfileForm)
+profilesRouter.put('/:profileId/update', controllers.updateProfile)
 
 export { profilesRouter }
