@@ -10,4 +10,7 @@ profilesRouter.use(isAuth)
 profilesRouter.get('/new', controllers.getNewProfileForm)
 profilesRouter.post('/new', controllers.createNewProfile)
 
+// Show a specific profile
+profilesRouter.get('/:profileId', controllers.getProfileById)
+
 export { profilesRouter }

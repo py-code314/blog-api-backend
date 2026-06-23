@@ -115,7 +115,7 @@ async function getPostById(req, res, next) {
     return next(err)
   }
 }
-// TODO: Refactor code and errors
+
 /* Show blog post form for editing */
 async function getEditPostForm(req, res, next) {
   try {

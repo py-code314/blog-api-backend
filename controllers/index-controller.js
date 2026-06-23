@@ -10,7 +10,7 @@ import {
   getPostById,
   getEditPostForm,
   updatePost,
-  deletePost
+  deletePost,
 } from './posts-controller.js'
 import {
   getNewCommentForm,
@@ -18,9 +18,12 @@ import {
   getEditCommentForm,
   updateComment,
   deleteComment,
-  
 } from './comments-controller.js'
-import {getNewProfileForm, createNewProfile} from './profiles-controller.js'
+import {
+  getNewProfileForm,
+  createNewProfile,
+  getProfileById,
+} from './profiles-controller.js'
 
 export {
   sign_up_get,
@@ -38,5 +41,7 @@ export {
   getEditCommentForm,
   updateComment,
   deleteComment,
-  getNewProfileForm, createNewProfile
+  getNewProfileForm,
+  createNewProfile,
+  getProfileById,
 }

@@ -1,6 +1,7 @@
 import { body, validationResult, matchedData } from 'express-validator'
 import { prisma } from '../lib/prisma.js'
 import BadRequestError from '../errors/request-error.js'
+import RecordNotFoundError from '../errors/resource-error.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -73,4 +74,43 @@ const createNewProfile = [
     }
   },
 ]
-export { getNewProfileForm, createNewProfile }
+
+/* Get a profile by id */
+async function getProfileById(req, res, next) {
+  try {
+    const profileId = parseInt(req.params.profileId, 10)
+    // const userId = req.user.id
+
+    // Make sure profileId is a number
+    if (isNaN(profileId)) {
+      const badRequest = new BadRequestError(
+        'The web address looks invalid. Please check the URL and try again.'
+      )
+      return next(badRequest)
+    }
+
+    // Get profile by id
+    const profile = await prisma.profile.findUnique({
+      where: {
+        id: profileId,
+      },
+    })
+
+    // Throw error if profile is not found
+    if (!profile) {
+      const invalidProfile = new RecordNotFoundError(
+        'The profile you are looking for no longer exists.'
+      )
+      return next(invalidProfile)
+    }
+
+    res.json({
+      success: true,
+      profile,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+export { getNewProfileForm, createNewProfile, getProfileById }
