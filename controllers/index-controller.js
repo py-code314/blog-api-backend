@@ -27,6 +27,10 @@ import {
   updateProfile,
   deleteProfile
 } from './profiles-controller.js'
+import {
+  getNewCategoryForm,
+
+} from './categories-controller.js'
 
 export {
   sign_up_get,
@@ -49,5 +53,6 @@ export {
   getProfileById,
   getEditProfileForm,
   updateProfile,
-  deleteProfile
+  deleteProfile,
+  getNewCategoryForm,
 }

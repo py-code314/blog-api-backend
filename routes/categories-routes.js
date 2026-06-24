@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import * as controllers from '../controllers/index-controller.js'
 import { isAuth } from '../middleware/auth.js'
 
 const categoriesRouter = Router()
@@ -6,8 +7,6 @@ const categoriesRouter = Router()
 categoriesRouter.use(isAuth)
 
 // Add new category
-categoriesRouter.get('/new', (req, res) => {
-  res.json({msg: 'Get route to get category form'})
-})
+categoriesRouter.get('/new', controllers.getNewCategoryForm)
 
 export default categoriesRouter
