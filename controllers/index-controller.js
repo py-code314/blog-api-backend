@@ -24,7 +24,8 @@ import {
   createNewProfile,
   getProfileById,
   getEditProfileForm,
-  updateProfile
+  updateProfile,
+  deleteProfile
 } from './profiles-controller.js'
 
 export {
@@ -47,5 +48,6 @@ export {
   createNewProfile,
   getProfileById,
   getEditProfileForm,
-  updateProfile
+  updateProfile,
+  deleteProfile
 }

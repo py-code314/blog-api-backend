@@ -18,4 +18,7 @@ profilesRouter.get('/:profileId', controllers.getProfileById)
 profilesRouter.get('/:profileId/update', controllers.getEditProfileForm)
 profilesRouter.put('/:profileId/update', controllers.updateProfile)
 
+// Delete a profile
+profilesRouter.delete('/:profileId/delete', controllers.deleteProfile)
+
 export { profilesRouter }

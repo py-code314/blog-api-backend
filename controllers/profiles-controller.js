@@ -229,10 +229,64 @@ const updateProfile = [
   },
 ]
 
+/* Delete profile by id */
+async function deleteProfile(req, res, next) {
+  try {
+    const userId = req.user.id
+    const profileId = Number(req.params.profileId)
+    const isInt = Number.isInteger(profileId)
+    const isAdmin = req.user.role === 'ADMIN'
+
+    // Make sure profileId is a number
+    if (!isInt) {
+      const badRequest = new BadRequestError(
+        'The web address looks invalid. Please check the URL and try again.'
+      )
+      return next(badRequest)
+    }
+
+    // Fetch profile by id
+    const profile = await prisma.profile.findUnique({
+      where: { id: profileId },
+    })
+
+    // Profile is not found
+    if (!profile) {
+      const invalidProfile = new RecordNotFoundError(
+        'The profile you want to delete no longer exists.'
+      )
+      return next(invalidProfile)
+    }
+
+    // Only owner and admin can delete a profile
+    const isSelf = profile.userId === userId
+    if (!isAdmin && !isSelf) {
+      const invalidUser = new AuthorizationError(
+        'You do not have permission to delete this profile.'
+      )
+      return next(invalidUser)
+    }
+
+    // Delete profile by id
+    const deletedProfile = await prisma.profile.delete({
+      where: { id: profileId },
+    })
+
+    return res.json({
+      success: true,
+      msg: 'Profile successfully deleted',
+      deletedProfile,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 export {
   getNewProfileForm,
   createNewProfile,
   getProfileById,
   getEditProfileForm,
   updateProfile,
+  deleteProfile,
 }

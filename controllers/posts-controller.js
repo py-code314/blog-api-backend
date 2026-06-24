@@ -268,7 +268,7 @@ async function deletePost(req, res, next) {
     const isAuthor = post.authorId === userId
     if (!isAdmin && !isAuthor) {
       const invalidUser = new AuthorizationError(
-        'You do not have permission to delete this comment.'
+        'You do not have permission to delete this post.'
       )
       return next(invalidUser)
     }
