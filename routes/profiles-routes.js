@@ -21,4 +21,4 @@ profilesRouter.put('/:profileId/update', controllers.updateProfile)
 // Delete a profile
 profilesRouter.delete('/:profileId/delete', controllers.deleteProfile)
 
-export { profilesRouter }
+export default profilesRouter 

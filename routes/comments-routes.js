@@ -19,4 +19,4 @@ commentsRouter.put('/:commentId/update', controllers.updateComment)
 // Delete a comment
 commentsRouter.delete('/:commentId/delete', controllers.deleteComment)
 
-export { commentsRouter }
+export default commentsRouter 

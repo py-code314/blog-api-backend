@@ -20,4 +20,4 @@ postsRouter.put('/:postId/update', controllers.updatePost)
 // Delete a post
 postsRouter.delete('/:postId/delete', controllers.deletePost)
 
-export { postsRouter }
+export default postsRouter 

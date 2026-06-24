@@ -33,6 +33,7 @@ app.use('/api/v1/login', routes.loginRouter)
 app.use('/api/v1/posts', routes.postsRouter)
 app.use('/api/v1/posts/:postId/comments', routes.commentsRouter)
 app.use('/api/v1/profiles', routes.profilesRouter)
+app.use('/api/v1/categories', routes.categoriesRouter)
 
 /**
  * -------------- ERROR HANDLER MIDDLEWARE ----------------
