@@ -29,6 +29,7 @@ import {
 } from './profiles-controller.js'
 import {
   getNewCategoryForm,
+  createNewCategory
 
 } from './categories-controller.js'
 
@@ -55,4 +56,5 @@ export {
   updateProfile,
   deleteProfile,
   getNewCategoryForm,
+  createNewCategory
 }

@@ -29,6 +29,7 @@ model User {
   // Relations
   posts    Post[]
   comments Comment[]
+  categories Category[]
   profile  Profile?
 
   @@map("users")
@@ -68,13 +69,15 @@ model Post {
 
 model Category {
   id   Int    @id @default(autoincrement())
-  name String @unique
-  slug String @unique // URL safe category name
+  name String 
 
   // Relations
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   Int
   posts Post[]
 
   @@map("categories")
+  @@unique([name, userId])
 }
 
 model Comment {

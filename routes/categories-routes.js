@@ -8,5 +8,6 @@ categoriesRouter.use(isAuth)
 
 // Add new category
 categoriesRouter.get('/new', controllers.getNewCategoryForm)
+categoriesRouter.post('/new', controllers.createNewCategory)
 
 export default categoriesRouter

@@ -1,6 +1,5 @@
 import { body, validationResult, matchedData } from 'express-validator'
 import { prisma } from '../lib/prisma.js'
-// import PostNotFoundError from '../errors/post-error.js'
 import RecordNotFoundError from '../errors/resource-error.js'
 import BadRequestError from '../errors/request-error.js'
 import AuthorizationError from '../errors/authorization-error.js'
