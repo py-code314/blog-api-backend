@@ -167,9 +167,75 @@ async function getEditCategoryForm(req, res, next) {
   }
 }
 
+/* Validate and update a category */
+const updateCategory = [
+  validateCategory,
+
+  async (req, res, next) => {
+    // Get form data
+    const { name } = req.body
+
+    // Validate request
+    const errors = validationResult(req)
+
+    // Show errors if validation fails
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        title: 'Edit Category',
+        category: {name},
+        errors: errors.array(),
+      })
+    }
+
+    try {
+      // Get validated form data
+      const { name } = matchedData(req)
+      const userId = req.user.id
+      const categoryId = Number(req.params.categoryId)
+      const isInt = Number.isInteger(categoryId)
+
+      // Make sure categoryId is a number
+      if (!isInt) {
+        const badRequest = new BadRequestError(
+          'The web address looks invalid. Please check the URL and try again.'
+        )
+        return next(badRequest)
+      }
+
+      // Get category by category id and user id to make sure only author can edit it
+      const category = await prisma.category.update({
+        where: {
+          id: categoryId,
+          userId: userId,
+        },
+        data: {
+          name
+        },
+      })
+
+      res.json({
+        success: true,
+        title: 'Updated Category',
+        category,
+      })
+    } catch (err) {
+      // If category id or user id doesn't match it throws error with code P2025
+      if (err.code === 'P2025') {
+        const invalidCategory = new RecordNotFoundError(
+          'The category you want to update no longer exists.'
+        )
+        return next(invalidCategory)
+      }
+      return next(err)
+    }
+  },
+]
+
 export {
   getNewCategoryForm,
   createNewCategory,
   getAllCategories,
   getEditCategoryForm,
+  updateCategory,
 }

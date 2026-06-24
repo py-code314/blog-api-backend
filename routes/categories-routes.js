@@ -15,6 +15,7 @@ categoriesRouter.get('/all', controllers.getAllCategories)
 
 // Update a specific post
 categoriesRouter.get('/:categoryId/update', controllers.getEditCategoryForm)
+categoriesRouter.put('/:categoryId/update', controllers.updateCategory)
 
 
 export default categoriesRouter
