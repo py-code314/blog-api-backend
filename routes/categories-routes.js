@@ -13,9 +13,12 @@ categoriesRouter.post('/new', controllers.createNewCategory)
 // Show all categories
 categoriesRouter.get('/all', controllers.getAllCategories)
 
-// Update a specific post
+// Update a category
 categoriesRouter.get('/:categoryId/update', controllers.getEditCategoryForm)
 categoriesRouter.put('/:categoryId/update', controllers.updateCategory)
+
+// Delete a category
+categoriesRouter.delete('/:categoryId/delete', controllers.deleteCategory)
 
 
 export default categoriesRouter

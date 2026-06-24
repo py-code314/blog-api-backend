@@ -32,7 +32,8 @@ import {
   createNewCategory,
   getAllCategories,
   getEditCategoryForm,
-  updateCategory
+  updateCategory,
+  deleteCategory
 
 } from './categories-controller.js'
 
@@ -62,5 +63,6 @@ export {
   createNewCategory,
   getAllCategories,
   getEditCategoryForm,
-  updateCategory
+  updateCategory,
+  deleteCategory
 }

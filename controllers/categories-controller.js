@@ -232,10 +232,64 @@ const updateCategory = [
   },
 ]
 
+/* Delete category by id */
+async function deleteCategory(req, res, next) {
+  try {
+    const userId = req.user.id
+    const categoryId = Number(req.params.categoryId)
+    const isInt = Number.isInteger(categoryId)
+    const isAdmin = req.user.role === 'ADMIN'
+
+    // Make sure categoryId is a number
+    if (!isInt) {
+      const badRequest = new BadRequestError(
+        'The web address looks invalid. Please check the URL and try again.'
+      )
+      return next(badRequest)
+    }
+
+    // Fetch category by id
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+    })
+
+    // Category is not found
+    if (!category) {
+      const invalidCategory = new RecordNotFoundError(
+        'The category you want to delete no longer exists.'
+      )
+      return next(invalidCategory)
+    }
+
+    // Only author and admin can delete a category
+    const isSelf = category.userId === userId
+    if (!isAdmin && !isSelf) {
+      const invalidUser = new AuthorizationError(
+        'You do not have permission to delete this category.'
+      )
+      return next(invalidUser)
+    }
+
+    // Delete category by id
+    const deletedCategory = await prisma.category.delete({
+      where: { id: categoryId },
+    })
+
+    return res.json({
+      success: true,
+      msg: 'Category successfully deleted',
+      deletedCategory,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 export {
   getNewCategoryForm,
   createNewCategory,
   getAllCategories,
   getEditCategoryForm,
   updateCategory,
+  deleteCategory,
 }
