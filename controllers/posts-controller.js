@@ -107,7 +107,7 @@ async function getPostById(req, res, next) {
       return next(invalidPost)
     }
 
-    res.json({
+    return res.json({
       success: true,
       post,
     })

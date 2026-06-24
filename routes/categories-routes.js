@@ -10,4 +10,7 @@ categoriesRouter.use(isAuth)
 categoriesRouter.get('/new', controllers.getNewCategoryForm)
 categoriesRouter.post('/new', controllers.createNewCategory)
 
+// Show all categories
+categoriesRouter.get('/all', controllers.getAllCategories)
+
 export default categoriesRouter

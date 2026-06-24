@@ -27,10 +27,10 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  posts    Post[]
-  comments Comment[]
+  posts      Post[]
+  comments   Comment[]
   categories Category[]
-  profile  Profile?
+  profile    Profile?
 
   @@map("users")
 }
@@ -69,15 +69,19 @@ model Post {
 
 model Category {
   id   Int    @id @default(autoincrement())
-  name String 
+  name String
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId   Int
-  posts Post[]
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  posts  Post[]
 
-  @@map("categories")
   @@unique([name, userId])
+  @@map("categories")
 }
 
 model Comment {
