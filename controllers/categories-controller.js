@@ -2,6 +2,8 @@ import { body, validationResult, matchedData } from 'express-validator'
 import { prisma } from '../lib/prisma.js'
 import BadRequestError from '../errors/request-error.js'
 import UserNotFoundError from '../errors/user-error.js'
+import RecordNotFoundError from '../errors/resource-error.js'
+import AuthorizationError from '../errors/authorization-error.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -117,4 +119,57 @@ async function getAllCategories(req, res, next) {
   }
 }
 
-export { getNewCategoryForm, createNewCategory, getAllCategories }
+/* Get category data for editing */
+async function getEditCategoryForm(req, res, next) {
+  try {
+    const userId = req.user.id
+    const categoryId = Number(req.params.categoryId)
+    const isInt = Number.isInteger(categoryId)
+
+    // Make sure categoryId is a number
+    if (!isInt) {
+      const badRequest = new BadRequestError(
+        'The web address looks invalid. Please check the URL and try again.'
+      )
+      return next(badRequest)
+    }
+
+    // Get category by id
+    const category = await prisma.category.findUnique({
+      where: {
+        id: categoryId,
+      },
+    })
+
+    // Category is not found
+    if (!category) {
+      const invalidCategory = new RecordNotFoundError(
+        'The category you want to edit no longer exists.'
+      )
+      return next(invalidCategory)
+    }
+
+    // User not created the category
+    if (category.userId !== userId) {
+      const invalidUser = new AuthorizationError(
+        'You do not have permission to edit this category.'
+      )
+      return next(invalidUser)
+    }
+
+    res.json({
+      success: true,
+      title: 'Edit Category',
+      category,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+export {
+  getNewCategoryForm,
+  createNewCategory,
+  getAllCategories,
+  getEditCategoryForm,
+}

@@ -30,7 +30,8 @@ import {
 import {
   getNewCategoryForm,
   createNewCategory,
-  getAllCategories
+  getAllCategories,
+  getEditCategoryForm
 
 } from './categories-controller.js'
 
@@ -58,5 +59,6 @@ export {
   deleteProfile,
   getNewCategoryForm,
   createNewCategory,
-  getAllCategories
+  getAllCategories,
+  getEditCategoryForm
 }
