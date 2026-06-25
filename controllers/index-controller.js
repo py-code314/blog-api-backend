@@ -38,6 +38,7 @@ import {
 } from './categories-controller.js'
 import {
   getNewTagForm,
+  createNewTag
 
 
 } from './tags-controller.js'
@@ -71,4 +72,5 @@ export {
   updateCategory,
   deleteCategory,
   getNewTagForm,
+  createNewTag
 }

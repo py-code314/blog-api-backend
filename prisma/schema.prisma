@@ -30,6 +30,7 @@ model User {
   posts      Post[]
   comments   Comment[]
   categories Category[]
+  tags       Tag[]
   profile    Profile?
 
   @@map("users")
@@ -100,14 +101,21 @@ model Comment {
   @@map("comments")
 }
 
+
 model Tag {
   id   Int    @id @default(autoincrement())
-  name String @unique
-  slug String @unique // URL safe tag name
+  name String
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  posts Post[]
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  posts  Post[]
 
+  @@unique([name, userId])
   @@map("tags")
 }
 

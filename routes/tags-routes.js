@@ -8,5 +8,6 @@ tagsRouter.use(isAuth)
 
 // Add new tag
 tagsRouter.get('/new', controllers.getNewTagForm)
+tagsRouter.post('/new', controllers.createNewTag)
 
 export default tagsRouter
