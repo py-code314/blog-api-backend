@@ -1,7 +1,6 @@
 import { body, validationResult, matchedData } from 'express-validator'
 import { prisma } from '../lib/prisma.js'
 import BadRequestError from '../errors/request-error.js'
-import UserNotFoundError from '../errors/user-error.js'
 import RecordNotFoundError from '../errors/resource-error.js'
 import AuthorizationError from '../errors/authorization-error.js'
 
@@ -70,12 +69,12 @@ const createNewCategory = [
         category,
       })
     } catch (err) {
-      // ? What kind of error to generate
+      // User id doesn't match in query
       if (err.code === 'P2025') {
-        const badRequest = new BadRequestError(
-          'The web address looks invalid. Please check the URL and try again.'
+        const invalidUser = new AuthorizationError(
+          'You do not have permission to create a new category. Please log in and try again.'
         )
-        return next(badRequest)
+        return next(invalidUser)
       }
       return next(err)
     }
@@ -94,7 +93,7 @@ async function getAllCategories(req, res, next) {
 
     // Throw error if user doesn't exist
     if (!userExists) {
-      const invalidUser = new UserNotFoundError(
+      const invalidUser = new AuthorizationError(
         'User not found. Please log in and try again.'
       )
       return next(invalidUser)
