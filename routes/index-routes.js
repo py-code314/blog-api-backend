@@ -3,6 +3,7 @@ import postsRouter from './posts-routes.js'
 import commentsRouter from './comments-routes.js'
 import profilesRouter from './profiles-routes.js'
 import categoriesRouter from './categories-routes.js'
+import tagsRouter from './tags-routes.js'
 
 export {
   signupRouter,
@@ -11,4 +12,5 @@ export {
   commentsRouter,
   profilesRouter,
   categoriesRouter,
+  tagsRouter,
 }
