@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import * as controllers from '../controllers/index-controller.js'
 import { isAuth } from '../middleware/auth.js'
 
 const tagsRouter = Router()
@@ -6,8 +7,6 @@ const tagsRouter = Router()
 tagsRouter.use(isAuth)
 
 // Add new tag
-tagsRouter.get('/new', (req, res) => {
-  res.json({msg: 'Get route to show tag form'})
-})
+tagsRouter.get('/new', controllers.getNewTagForm)
 
 export default tagsRouter

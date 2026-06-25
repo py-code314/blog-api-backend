@@ -36,6 +36,11 @@ import {
   deleteCategory
 
 } from './categories-controller.js'
+import {
+  getNewTagForm,
+
+
+} from './tags-controller.js'
 
 export {
   sign_up_get,
@@ -64,5 +69,6 @@ export {
   getAllCategories,
   getEditCategoryForm,
   updateCategory,
-  deleteCategory
+  deleteCategory,
+  getNewTagForm,
 }
