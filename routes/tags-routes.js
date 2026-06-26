@@ -10,4 +10,7 @@ tagsRouter.use(isAuth)
 tagsRouter.get('/new', controllers.getNewTagForm)
 tagsRouter.post('/new', controllers.createNewTag)
 
+// Show all tags
+tagsRouter.get('/all', controllers.getAllTags)
+
 export default tagsRouter

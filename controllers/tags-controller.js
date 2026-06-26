@@ -83,4 +83,41 @@ const createNewTag = [
   },
 ]
 
-export { getNewTagForm, createNewTag }
+/* Get all tags by user id */
+async function getAllTags(req, res, next) {
+  try {
+    const userId = req.user.id
+
+    // Check for user
+    const userExists = await prisma.user.findUnique({
+      where: { id: userId },
+    })
+
+    // Throw error if user doesn't exist
+    if (!userExists) {
+      const invalidUser = new AuthorizationError(
+        'User not found. Please log in and try again.'
+      )
+      return next(invalidUser)
+    }
+
+    // Get all tags
+    const tags = await prisma.tag.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
+
+    return res.json({
+      success: true,
+      tags,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+export { getNewTagForm, createNewTag, getAllTags }
