@@ -1,6 +1,8 @@
 import { body, validationResult, matchedData } from 'express-validator'
 import { prisma } from '../lib/prisma.js'
 import AuthorizationError from '../errors/authorization-error.js'
+import BadRequestError from '../errors/request-error.js'
+import RecordNotFoundError from '../errors/resource-error.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -120,4 +122,52 @@ async function getAllTags(req, res, next) {
   }
 }
 
-export { getNewTagForm, createNewTag, getAllTags }
+/* Get tag data for editing */
+async function getEditTagForm(req, res, next) {
+  try {
+    const userId = req.user.id
+    const tagId = Number(req.params.tagId)
+    const isInt = Number.isInteger(tagId)
+
+    // Make sure tagId is a number
+    if (!isInt) {
+      const badRequest = new BadRequestError(
+        'The web address looks invalid. Please check the URL and try again.'
+      )
+      return next(badRequest)
+    }
+
+    // Get tag by id
+    const tag = await prisma.tag.findUnique({
+      where: {
+        id: tagId,
+      },
+    })
+
+    // Tag is not found
+    if (!tag) {
+      const invalidTag = new RecordNotFoundError(
+        'The tag you want to edit no longer exists.'
+      )
+      return next(invalidTag)
+    }
+
+    // User not created the tag
+    if (tag.userId !== userId) {
+      const invalidUser = new AuthorizationError(
+        'You do not have permission to edit this tag.'
+      )
+      return next(invalidUser)
+    }
+
+    res.json({
+      success: true,
+      title: 'Edit Tag',
+      tag,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+export { getNewTagForm, createNewTag, getAllTags, getEditTagForm }

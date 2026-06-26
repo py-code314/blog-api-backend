@@ -13,4 +13,7 @@ tagsRouter.post('/new', controllers.createNewTag)
 // Show all tags
 tagsRouter.get('/all', controllers.getAllTags)
 
+// Update a tag
+tagsRouter.get('/:tagId/update', controllers.getEditTagForm)
+
 export default tagsRouter
