@@ -5,11 +5,11 @@ const signupRouter = Router()
 const loginRouter = Router()
 
 /* Sign up routes */
-signupRouter.get('/', controllers.sign_up_get)
-signupRouter.post('/', controllers.sign_up_post)
+signupRouter.get('/', controllers.getSignupForm)
+signupRouter.post('/', controllers.registerUser)
 
 /* Log in routes */
-loginRouter.get('/', controllers.log_in_get)
-loginRouter.post('/', controllers.log_in_post)
+loginRouter.get('/', controllers.getLoginForm)
+loginRouter.post('/', controllers.loginUser)
 
 export { signupRouter, loginRouter }

@@ -1,8 +1,8 @@
 import {
-  sign_up_get,
-  sign_up_post,
-  log_in_get,
-  log_in_post,
+  getSignupForm,
+  registerUser,
+  getLoginForm,
+  loginUser,
 } from './auth-controller.js'
 import {
   getNewPostForm,
@@ -25,7 +25,7 @@ import {
   getProfileById,
   getEditProfileForm,
   updateProfile,
-  deleteProfile
+  deleteProfile,
 } from './profiles-controller.js'
 import {
   getNewCategoryForm,
@@ -33,8 +33,7 @@ import {
   getAllCategories,
   getEditCategoryForm,
   updateCategory,
-  deleteCategory
-
+  deleteCategory,
 } from './categories-controller.js'
 import {
   getNewTagForm,
@@ -42,16 +41,14 @@ import {
   getAllTags,
   getEditTagForm,
   updateTag,
-  deleteTag
-
-
+  deleteTag,
 } from './tags-controller.js'
 
 export {
-  sign_up_get,
-  sign_up_post,
-  log_in_get,
-  log_in_post,
+  getSignupForm,
+  registerUser,
+  getLoginForm,
+  loginUser,
   getNewPostForm,
   createNewPost,
   getPostById,
@@ -80,5 +77,5 @@ export {
   getAllTags,
   getEditTagForm,
   updateTag,
-  deleteTag
+  deleteTag,
 }

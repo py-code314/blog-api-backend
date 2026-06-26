@@ -81,14 +81,14 @@ const validateLogin = [
  */
 
 /* Show sign up form */
-async function sign_up_get(req, res) {
+async function getSignupForm(req, res) {
   res.json({
     title: 'Sign-up',
   })
 }
 
 /* Validate and add new user */
-const sign_up_post = [
+const registerUser = [
   validateSignup,
 
   async (req, res, next) => {
@@ -155,7 +155,7 @@ const sign_up_post = [
  */
 
 /* Show log in form */
-async function log_in_get(req, res) {
+async function getLoginForm(req, res) {
   // req.user = true
   // User is already logged in
   if (req.user) {
@@ -170,7 +170,7 @@ async function log_in_get(req, res) {
 }
 
 /* Validate and authenticate user */
-const log_in_post = [
+const loginUser = [
   validateLogin,
   async (req, res, next) => {
     // Get email from form
@@ -255,4 +255,4 @@ const log_in_post = [
   },
 ]
 
-export { sign_up_get, sign_up_post, log_in_get, log_in_post }
+export { getSignupForm, registerUser, getLoginForm, loginUser }
