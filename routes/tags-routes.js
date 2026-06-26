@@ -17,4 +17,7 @@ tagsRouter.get('/all', controllers.getAllTags)
 tagsRouter.get('/:tagId/update', controllers.getEditTagForm)
 tagsRouter.put('/:tagId/update', controllers.updateTag)
 
+// Delete a tag
+tagsRouter.delete('/:tagId/delete', controllers.deleteTag)
+
 export default tagsRouter

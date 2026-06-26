@@ -235,4 +235,64 @@ const updateTag = [
   },
 ]
 
-export { getNewTagForm, createNewTag, getAllTags, getEditTagForm, updateTag }
+/* Delete tag by id */
+async function deleteTag(req, res, next) {
+  try {
+    const userId = req.user.id
+    const tagId = Number(req.params.tagId)
+    const isInt = Number.isInteger(tagId)
+    const isAdmin = req.user.role === 'ADMIN'
+
+    // Make sure tagId is a number
+    if (!isInt) {
+      const badRequest = new BadRequestError(
+        'The web address looks invalid. Please check the URL and try again.'
+      )
+      return next(badRequest)
+    }
+
+    // Fetch tag by id
+    const tag = await prisma.tag.findUnique({
+      where: { id: tagId },
+    })
+
+    // Tag is not found
+    if (!tag) {
+      const invalidTag = new RecordNotFoundError(
+        'The tag you want to delete no longer exists.'
+      )
+      return next(invalidTag)
+    }
+
+    // Only author and admin can delete a tag
+    const isSelf = tag.userId === userId
+    if (!isAdmin && !isSelf) {
+      const invalidUser = new AuthorizationError(
+        'You do not have permission to delete this tag.'
+      )
+      return next(invalidUser)
+    }
+
+    // Delete tag by id
+    const deletedTag = await prisma.tag.delete({
+      where: { id: tagId },
+    })
+
+    return res.json({
+      success: true,
+      msg: 'Tag successfully deleted',
+      deletedTag,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+export {
+  getNewTagForm,
+  createNewTag,
+  getAllTags,
+  getEditTagForm,
+  updateTag,
+  deleteTag,
+}

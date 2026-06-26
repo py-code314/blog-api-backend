@@ -41,7 +41,8 @@ import {
   createNewTag,
   getAllTags,
   getEditTagForm,
-  updateTag
+  updateTag,
+  deleteTag
 
 
 } from './tags-controller.js'
@@ -78,5 +79,6 @@ export {
   createNewTag,
   getAllTags,
   getEditTagForm,
-  updateTag
+  updateTag,
+  deleteTag
 }
