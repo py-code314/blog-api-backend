@@ -15,5 +15,6 @@ tagsRouter.get('/all', controllers.getAllTags)
 
 // Update a tag
 tagsRouter.get('/:tagId/update', controllers.getEditTagForm)
+tagsRouter.put('/:tagId/update', controllers.updateTag)
 
 export default tagsRouter

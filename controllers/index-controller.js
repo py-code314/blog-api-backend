@@ -40,7 +40,8 @@ import {
   getNewTagForm,
   createNewTag,
   getAllTags,
-  getEditTagForm
+  getEditTagForm,
+  updateTag
 
 
 } from './tags-controller.js'
@@ -76,5 +77,6 @@ export {
   getNewTagForm,
   createNewTag,
   getAllTags,
-  getEditTagForm
+  getEditTagForm,
+  updateTag
 }
