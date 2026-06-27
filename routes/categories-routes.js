@@ -4,21 +4,21 @@ import { isAuth } from '../middleware/auth.js'
 
 const categoriesRouter = Router()
 // All Category routes are protected routes
-categoriesRouter.use(isAuth)
+// categoriesRouter.use(isAuth)
 
 // Add new category
-categoriesRouter.get('/new', controllers.getNewCategoryForm)
-categoriesRouter.post('/new', controllers.createNewCategory)
+categoriesRouter.get('/new', isAuth, controllers.getNewCategoryForm)
+categoriesRouter.post('/new', isAuth, controllers.createNewCategory)
 
 // Show all categories
 categoriesRouter.get('/all', controllers.getAllCategories)
 
 // Update a category
-categoriesRouter.get('/:categoryId/update', controllers.getEditCategoryForm)
-categoriesRouter.put('/:categoryId/update', controllers.updateCategory)
+categoriesRouter.get('/:categoryId/update', isAuth, controllers.getEditCategoryForm)
+categoriesRouter.put('/:categoryId/update', isAuth, controllers.updateCategory)
 
 // Delete a category
-categoriesRouter.delete('/:categoryId/delete', controllers.deleteCategory)
+categoriesRouter.delete('/:categoryId/delete', isAuth, controllers.deleteCategory)
 
 
 export default categoriesRouter

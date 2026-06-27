@@ -81,33 +81,27 @@ const createNewCategory = [
   },
 ]
 
-/* Get all categories by user id */
+/* Get all categories */
 async function getAllCategories(req, res, next) {
   try {
-    const userId = req.user.id
+    const userId = req.user?.id
 
-    // Check for user
-    const userExists = await prisma.user.findUnique({
-      where: { id: userId },
-    })
-
-    // Throw error if user doesn't exist
-    if (!userExists) {
-      const invalidUser = new AuthorizationError(
-        'User not found. Please log in and try again.'
-      )
-      return next(invalidUser)
-    }
-
-    // Get all categories
-    const categories = await prisma.category.findMany({
-      where: {
-        userId,
-      },
+    // Visitor
+    let queryOptions = {
       orderBy: {
         updatedAt: 'desc',
       },
-    })
+    }
+
+    // Logged in user
+    if (userId) {
+      queryOptions.where = { userId }
+    }
+
+    // Get all categories
+    const categories = await prisma.category.findMany(
+      queryOptions
+    )
 
     return res.json({
       success: true,
