@@ -85,6 +85,51 @@ const createNewPost = [
   },
 ]
 
+// Get all published posts
+async function getPublicPosts(req, res, next) {
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        published: true,
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
+
+    return res.json({
+      success: true,
+      posts,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+// Get all author posts both published & unpublished
+async function getAuthorPosts(req, res, next) {
+  try {
+    const userId = req.user?.id
+
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId: userId
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
+
+    return res.json({
+      success: true,
+      posts,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+
 
 /* Get a specific post by id */
 async function getPostById(req, res, next) {
@@ -300,7 +345,8 @@ async function deletePost(req, res, next) {
 export {
   getNewPostForm,
   createNewPost,
-  getAllPosts,
+  getPublicPosts,
+  getAuthorPosts,
   getPostById,
   getEditPostForm,
   updatePost,

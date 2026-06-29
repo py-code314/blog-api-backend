@@ -10,6 +10,10 @@ const postsRouter = Router()
 postsRouter.get('/new', isAuth, controllers.getNewPostForm)
 postsRouter.post('/new', isAuth, controllers.createNewPost)
 
+// Get all public posts
+postsRouter.get('/', controllers.getPublicPosts)
+// Get all author posts
+postsRouter.get('/me', isAuth, controllers.getAuthorPosts)
 // Get a specific post
 postsRouter.get('/:postId', controllers.getPostById)
 
