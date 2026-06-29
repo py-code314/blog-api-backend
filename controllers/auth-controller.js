@@ -24,6 +24,7 @@ const validateSignup = [
     .bail()
     .isEmail()
     .withMessage(`Email ${emailInvalidErr}`)
+    .normalizeEmail()
     .custom(async (email) => {
       // Throw error if email already exists in db
       const existingUser = await prisma.user.findUnique({
@@ -72,7 +73,11 @@ const validateSignup = [
 
 /* Validate log in data */
 const validateLogin = [
-  body('email').trim().notEmpty().withMessage(`Email ${emptyErr}`),
+  body('email')
+    .trim()
+    .notEmpty()
+    .withMessage(`Email ${emptyErr}`)
+    .normalizeEmail(),
   body('password').trim().notEmpty().withMessage(`Password ${emptyErr}`),
 ]
 
@@ -129,7 +134,7 @@ const registerUser = [
 
       // Add new user to db
       await prisma.user.create({
-        data: validSignupData
+        data: validSignupData,
       })
 
       res.json({
