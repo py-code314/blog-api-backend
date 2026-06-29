@@ -1,8 +1,10 @@
 import { body, validationResult, matchedData } from 'express-validator'
 import { prisma } from '../lib/prisma.js'
+
 import BadRequestError from '../errors/request-error.js'
 import RecordNotFoundError from '../errors/resource-error.js'
 import AuthorizationError from '../errors/authorization-error.js'
+import verifyToken from '../utils/verify-token.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -84,7 +86,9 @@ const createNewCategory = [
 /* Get all categories */
 async function getAllCategories(req, res, next) {
   try {
-    const userId = req.user?.id
+    // Get user id
+    const userData = await verifyToken(req)
+    const userId = userData?.sub
 
     // Visitor
     let queryOptions = {
@@ -93,7 +97,7 @@ async function getAllCategories(req, res, next) {
       },
     }
 
-    // Logged in user
+    // Logged in user gets their own categories
     if (userId) {
       queryOptions.where = { userId }
     }

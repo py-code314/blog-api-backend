@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma.js'
 import BadRequestError from '../errors/request-error.js'
 import RecordNotFoundError from '../errors/resource-error.js'
 import AuthorizationError from '../errors/authorization-error.js'
+import verifyToken from '../utils/verify-token.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -82,6 +83,10 @@ async function getProfileById(req, res, next) {
     const profileId = Number(req.params.profileId)
     const isInt = Number.isInteger(profileId)
 
+    // Get user id
+    const userData = await verifyToken(req)
+    const userId = userData?.sub
+
     // Make sure profileId is a number
     if (!isInt) {
       const badRequest = new BadRequestError(
@@ -95,6 +100,15 @@ async function getProfileById(req, res, next) {
       where: {
         id: profileId,
       },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+            posts: true,
+          },
+        },
+      },
     })
 
     // Throw error if profile is not found
@@ -103,6 +117,11 @@ async function getProfileById(req, res, next) {
         'The profile you are looking for no longer exists.'
       )
       return next(invalidProfile)
+    }
+
+    // Remove email if a visitor or any other user is viewing profile
+    if (userId !== profile.userId) {
+      delete profile.user.email
     }
 
     res.json({
