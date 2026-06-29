@@ -11,6 +11,11 @@ const emptyErr = 'can not be empty.'
 const validatePost = [
   body('title').trim().notEmpty().withMessage(`Title ${emptyErr}`),
   body('content').trim().notEmpty().withMessage(`Post content ${emptyErr}`),
+  body('published')
+    .optional({ values: 'null' })
+    .isBoolean()
+    .withMessage('Value must be true or false')
+    .toBoolean(),
 ]
 
 /* Show blog post form */
@@ -28,10 +33,11 @@ const createNewPost = [
 
   async (req, res, next) => {
     // Get form data
-    const { title, content } = req.body
+    const { title, content, published } = req.body
     const postData = {
       title,
       content,
+      published,
     }
 
     // Validate request
@@ -49,7 +55,7 @@ const createNewPost = [
 
     try {
       // Get validated form data
-      const { title, content } = matchedData(req)
+      const { title, content, published } = matchedData(req)
       const userId = req.user.id
 
       // Add post to db
@@ -57,6 +63,7 @@ const createNewPost = [
         data: {
           title,
           content,
+          published,
           author: {
             connect: { id: userId },
           },
@@ -78,6 +85,7 @@ const createNewPost = [
   },
 ]
 
+
 /* Get a specific post by id */
 async function getPostById(req, res, next) {
   try {
@@ -92,6 +100,8 @@ async function getPostById(req, res, next) {
       return next(badRequest)
     }
 
+    // TODO: Visitor/user can see only published posts
+    // TODO: Author can see published & unpublished posts
     // Get post by id
     const post = await prisma.post.findUnique({
       where: {
@@ -290,6 +300,7 @@ async function deletePost(req, res, next) {
 export {
   getNewPostForm,
   createNewPost,
+  getAllPosts,
   getPostById,
   getEditPostForm,
   updatePost,

@@ -11,6 +11,7 @@ import {
   getEditPostForm,
   updatePost,
   deletePost,
+  getAllPosts,
 } from './posts-controller.js'
 import {
   getNewCommentForm,
@@ -51,6 +52,7 @@ export {
   loginUser,
   getNewPostForm,
   createNewPost,
+  getAllPosts,
   getPostById,
   getEditPostForm,
   updatePost,

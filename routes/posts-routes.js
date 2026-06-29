@@ -10,7 +10,7 @@ const postsRouter = Router()
 postsRouter.get('/new', isAuth, controllers.getNewPostForm)
 postsRouter.post('/new', isAuth, controllers.createNewPost)
 
-// Show a specific post
+// Get a specific post
 postsRouter.get('/:postId', controllers.getPostById)
 
 // Update a specific post
