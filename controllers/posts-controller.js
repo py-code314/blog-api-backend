@@ -3,9 +3,13 @@ import { prisma } from '../lib/prisma.js'
 import RecordNotFoundError from '../errors/resource-error.js'
 import BadRequestError from '../errors/request-error.js'
 import AuthorizationError from '../errors/authorization-error.js'
+import verifyCategoryIds from '../utils/categories.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
+const booleanErr = 'must be true or false.'
+const arrErr = 'must be an array of IDs.'
+const intErr = 'must be an integer.'
 
 /* Validate new post */
 const validatePost = [
@@ -13,9 +17,18 @@ const validatePost = [
   body('content').trim().notEmpty().withMessage(`Post content ${emptyErr}`),
   body('published')
     .optional({ values: 'null' })
+    .trim()
     .isBoolean()
-    .withMessage('Value must be true or false')
+    .withMessage(`published ${booleanErr}`)
     .toBoolean(),
+  body('categories')
+    .optional({ values: 'falsy' })
+    .isArray()
+    .withMessage(`Categories ${arrErr}`),
+  body('categories.*')
+    .isInt()
+    .withMessage(`Each category ID ${intErr}`)
+    .toInt(),
 ]
 
 /* Show blog post form */
@@ -33,11 +46,12 @@ const createNewPost = [
 
   async (req, res, next) => {
     // Get form data
-    const { title, content, published } = req.body
+    const { title, content, published, categories } = req.body
     const postData = {
       title,
       content,
       published,
+      categories,
     }
 
     // Validate request
@@ -55,25 +69,43 @@ const createNewPost = [
 
     try {
       // Get validated form data
-      const { title, content, published } = matchedData(req)
+      const { title, content, published, categories } = matchedData(req)
+
       const userId = req.user.id
+
+      let postData = {
+        title,
+        content,
+        author: {
+          connect: { id: userId },
+        },
+      }
+
+      // Add published to postData conditionally
+      if (published !== undefined) {
+        postData.published = published
+      }
+
+      // Add categories to postData conditionally
+      const validCategories = await verifyCategoryIds(categories)
+
+      if (validCategories) {
+        postData.categories = {
+          connect: categories.map((categoryId) => ({ id: categoryId })),
+        }
+      }
 
       // Add post to db
       const post = await prisma.post.create({
-        data: {
-          title,
-          content,
-          published,
-          author: {
-            connect: { id: userId },
-          },
-        },
+        data: postData,
       })
+
       return res.json({
         success: true,
         post,
       })
     } catch (err) {
+      // Prisma throws error with code P2025 if userId is invalid in the query
       if (err.code === 'P2025') {
         const badRequest = new BadRequestError(
           'The web address looks invalid. Please check the URL and try again.'
@@ -113,7 +145,7 @@ async function getAuthorPosts(req, res, next) {
 
     const posts = await prisma.post.findMany({
       where: {
-        authorId: userId
+        authorId: userId,
       },
       orderBy: {
         updatedAt: 'desc',
@@ -128,8 +160,6 @@ async function getAuthorPosts(req, res, next) {
     return next(err)
   }
 }
-
-
 
 /* Get a specific post by id */
 async function getPostById(req, res, next) {
@@ -152,6 +182,7 @@ async function getPostById(req, res, next) {
       where: {
         id: postId,
       },
+      include: { categories: true },
     })
 
     // Throw error if post is not found
