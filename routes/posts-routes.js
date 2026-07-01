@@ -10,12 +10,15 @@ const postsRouter = Router()
 postsRouter.get('/new', isAuth, controllers.getNewPostForm)
 postsRouter.post('/new', isAuth, controllers.createNewPost)
 
+// ? Should I change the order
 // Get all public posts
 postsRouter.get('/', controllers.getPublicPosts)
 // Get all author posts
 postsRouter.get('/me', isAuth, controllers.getAuthorPosts)
 // Get a specific post
+// ? Should I change the order
 postsRouter.get('/:postId', controllers.getPublicPostById)
+postsRouter.get('/:postId/me', isAuth, controllers.getAuthorPostById)
 // postsRouter.get('/:postId', controllers.getPostById)
 
 // Update a specific post

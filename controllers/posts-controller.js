@@ -179,7 +179,7 @@ async function getPublicPostById(req, res, next) {
     const post = await prisma.post.findUnique({
       where: {
         id: postId,
-        published: true
+        published: true,
       },
       include: { categories: true },
     })
@@ -200,48 +200,47 @@ async function getPublicPostById(req, res, next) {
     return next(err)
   }
 }
-// /* Get a specific post by id */
-// async function getPostById(req, res, next) {
-//   try {
-//     const postId = Number(req.params.postId)
-//     const isInt = Number.isInteger(postId)
 
-//     // Make sure postId is a number
-//     if (!isInt) {
-//       const badRequest = new BadRequestError(
-//         'The web address looks invalid. Please check the URL and try again.'
-//       )
-//       return next(badRequest)
-//     }
+/* Get an author post by id */
+async function getAuthorPostById(req, res, next) {
+  try {
+    const postId = Number(req.params.postId)
+    const isInt = Number.isInteger(postId)
+    const userId = Number(req.user.id)
 
-//     // TODO: Visitor/user can see only published posts
-//     // TODO: Author can see published & unpublished posts
-//     // * For visitor post id and published true both should match
-//     // * For user only post id should match
-//     // Get post by id
-//     const post = await prisma.post.findUnique({
-//       where: {
-//         id: postId,
-//       },
-//       include: { categories: true },
-//     })
+    // Make sure postId is a number
+    if (!isInt) {
+      const badRequest = new BadRequestError(
+        'The web address looks invalid. Please check the URL and try again.'
+      )
+      return next(badRequest)
+    }
 
-//     // Throw error if post is not found
-//     if (!post) {
-//       const invalidPost = new RecordNotFoundError(
-//         'The post you are looking for no longer exists.'
-//       )
-//       return next(invalidPost)
-//     }
+    // Get own post by id
+    const post = await prisma.post.findUnique({
+      where: {
+        id: postId,
+        authorId: userId,
+      },
+      include: { categories: true },
+    })
 
-//     return res.json({
-//       success: true,
-//       post,
-//     })
-//   } catch (err) {
-//     return next(err)
-//   }
-// }
+    // Throw error if post is not found
+    if (!post) {
+      const invalidPost = new RecordNotFoundError(
+        'The post you are looking for no longer exists.'
+      )
+      return next(invalidPost)
+    }
+
+    return res.json({
+      success: true,
+      post,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
 
 /* Show blog post form for editing */
 async function getEditPostForm(req, res, next) {
@@ -420,7 +419,7 @@ export {
   getPublicPosts,
   getAuthorPosts,
   getPublicPostById,
-
+  getAuthorPostById,
   // getPostById,
   getEditPostForm,
   updatePost,
