@@ -180,7 +180,7 @@ async function getPublicPostById(req, res, next) {
         id: postId,
         published: true,
       },
-      include: { categories: true },
+      include: { categories: true, comments: true },
     })
 
     // Throw error if post is not found
@@ -221,7 +221,7 @@ async function getAuthorPostById(req, res, next) {
         id: postId,
         authorId: userId,
       },
-      include: { categories: true },
+      include: { categories: true, comments: true },
     })
 
     // Throw error if post is not found

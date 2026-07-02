@@ -46,7 +46,22 @@ const createNewComment = [
       const { content } = matchedData(req)
       const userId = req.user.id
       const postId = Number(req.params.postId)
-      // const isInt = Number.isInteger(postId)
+
+      // Comment can be added to public posts only
+      const post = await prisma.post.findFirst({
+        where: {
+          id: postId,
+          published: true,
+        },
+      })
+
+      // Throw error if post is not found
+      if (!post) {
+        const invalidPost = new RecordNotFoundError(
+          'The post you are looking for no longer exists.'
+        )
+        return next(invalidPost)
+      }
 
       // Add comment to db
       const comment = await prisma.comment.create({
