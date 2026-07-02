@@ -4,6 +4,7 @@ import RecordNotFoundError from '../errors/resource-error.js'
 import BadRequestError from '../errors/request-error.js'
 import AuthorizationError from '../errors/authorization-error.js'
 import verifyCategoryIds from '../utils/categories.js'
+import verifyTagIds from '../utils/tags.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -29,6 +30,11 @@ const validatePost = [
     .isInt()
     .withMessage(`Each category ID ${intErr}`)
     .toInt(),
+  body('tags')
+    .optional({ values: 'falsy' })
+    .isArray()
+    .withMessage(`Tags ${arrErr}`),
+  body('tags.*').isInt().withMessage(`Each tag ID ${intErr}`).toInt(),
 ]
 
 /* Show blog post form */
@@ -46,12 +52,13 @@ const createNewPost = [
 
   async (req, res, next) => {
     // Get form data
-    const { title, content, published, categories } = req.body
+    const { title, content, published, categories, tags } = req.body
     const postData = {
       title,
       content,
       published,
       categories,
+      tags,
     }
 
     // Validate request
@@ -69,7 +76,7 @@ const createNewPost = [
 
     try {
       // Get validated form data
-      const { title, content, published, categories } = matchedData(req)
+      const { title, content, published, categories, tags } = matchedData(req)
       const userId = req.user.id
 
       let postData = {
@@ -91,6 +98,15 @@ const createNewPost = [
       if (validCategories) {
         postData.categories = {
           connect: categories.map((categoryId) => ({ id: categoryId })),
+        }
+      }
+
+      // Add tags to postData conditionally
+      const validTags = await verifyTagIds(tags)
+
+      if (validTags) {
+        postData.tags = {
+          connect: tags.map((tagId) => ({ id: tagId })),
         }
       }
 
@@ -123,6 +139,7 @@ async function getPublicPosts(req, res, next) {
       where: {
         published: true,
       },
+      include: { categories: true, comments: true, tags: true },
       orderBy: {
         updatedAt: 'desc',
       },
@@ -146,6 +163,7 @@ async function getAuthorPosts(req, res, next) {
       where: {
         authorId: userId,
       },
+      include: { categories: true, comments: true, tags: true },
       orderBy: {
         updatedAt: 'desc',
       },
@@ -180,7 +198,7 @@ async function getPublicPostById(req, res, next) {
         id: postId,
         published: true,
       },
-      include: { categories: true, comments: true },
+      include: { categories: true, comments: true, tags: true },
     })
 
     // Throw error if post is not found
@@ -221,7 +239,7 @@ async function getAuthorPostById(req, res, next) {
         id: postId,
         authorId: userId,
       },
-      include: { categories: true, comments: true },
+      include: { categories: true, comments: true, tags: true },
     })
 
     // Throw error if post is not found
@@ -261,7 +279,7 @@ async function getEditPostForm(req, res, next) {
       where: {
         id: postId,
       },
-      include: { categories: true },
+      include: { categories: true, tags: true },
     })
 
     // Post is not found
@@ -296,12 +314,13 @@ const updatePost = [
 
   async (req, res, next) => {
     // Get form data
-    const { title, content, published, categories } = req.body
+    const { title, content, published, categories, tags } = req.body
     const postData = {
       title,
       content,
       published,
       categories,
+      tags,
     }
 
     // Validate request
@@ -319,7 +338,7 @@ const updatePost = [
 
     try {
       // Get validated form data
-      const { title, content, published, categories } = matchedData(req)
+      const { title, content, published, categories, tags } = matchedData(req)
 
       const userId = req.user.id
       const postId = Number(req.params.postId)
@@ -353,7 +372,16 @@ const updatePost = [
         }
       }
 
-      // Get post by post id and user id to make sure only author can edit it
+      // Add tags to postData conditionally
+      const validTags = await verifyTagIds(tags)
+
+      if (validTags) {
+        postData.tags = {
+          connect: tags.map((tagId) => ({ id: tagId })),
+        }
+      }
+
+      // Only author can update a post
       const post = await prisma.post.update({
         where: {
           id: postId,

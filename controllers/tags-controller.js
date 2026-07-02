@@ -58,7 +58,7 @@ const createNewTag = [
       // Get validated form data
       const { name } = matchedData(req)
       const userId = req.user.id
-      // TODO: Add post id when a tag is added to a post
+
       // Add tag to db
       const tag = await prisma.tag.create({
         data: {
@@ -108,6 +108,7 @@ async function getAllTags(req, res, next) {
       where: {
         userId,
       },
+      include: {posts: true},
       orderBy: {
         updatedAt: 'desc',
       },

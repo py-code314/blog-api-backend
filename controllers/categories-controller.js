@@ -56,7 +56,7 @@ const createNewCategory = [
       // Get validated form data
       const { name } = matchedData(req)
       const userId = req.user.id
-      // TODO: Add post id when a category is added to a post
+      
       // Add category to db
       const category = await prisma.category.create({
         data: {
@@ -95,6 +95,7 @@ async function getAllCategories(req, res, next) {
       orderBy: {
         updatedAt: 'desc',
       },
+      include: {posts: true}
     }
 
     // Logged in user gets their own categories
