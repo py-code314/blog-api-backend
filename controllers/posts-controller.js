@@ -70,7 +70,6 @@ const createNewPost = [
     try {
       // Get validated form data
       const { title, content, published, categories } = matchedData(req)
-
       const userId = req.user.id
 
       let postData = {
@@ -262,6 +261,7 @@ async function getEditPostForm(req, res, next) {
       where: {
         id: postId,
       },
+      include: { categories: true },
     })
 
     // Post is not found
@@ -296,10 +296,12 @@ const updatePost = [
 
   async (req, res, next) => {
     // Get form data
-    const { title, content } = req.body
+    const { title, content, published, categories } = req.body
     const postData = {
       title,
       content,
+      published,
+      categories,
     }
 
     // Validate request
@@ -317,7 +319,8 @@ const updatePost = [
 
     try {
       // Get validated form data
-      const { title, content } = matchedData(req)
+      const { title, content, published, categories } = matchedData(req)
+
       const userId = req.user.id
       const postId = Number(req.params.postId)
       const isInt = Number.isInteger(postId)
@@ -330,16 +333,33 @@ const updatePost = [
         return next(badRequest)
       }
 
+      let postData = {
+        title,
+        content,
+      }
+
+      // Add 'published' to postData conditionally
+      if (published !== undefined) {
+        postData.published = published
+      }
+
+      // Add categories to postData conditionally
+      const validCategories = await verifyCategoryIds(categories)
+
+      if (validCategories) {
+        postData.categories = {
+          set: [], // Clear existing categories
+          connect: categories.map((categoryId) => ({ id: categoryId })),
+        }
+      }
+
       // Get post by post id and user id to make sure only author can edit it
       const post = await prisma.post.update({
         where: {
           id: postId,
           authorId: userId,
         },
-        data: {
-          title,
-          content,
-        },
+        data: postData,
       })
 
       res.json({
