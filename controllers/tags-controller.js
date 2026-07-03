@@ -83,7 +83,9 @@ const createNewTag = [
         )
         return next(invalidUser)
       } else if (err.code === 'P2002') {
-        const invalidTag = new DuplicateError('A tag with that name already exists. Please choose a different name.')
+        const invalidTag = new DuplicateError(
+          'A tag with that name already exists. Please choose a different name.'
+        )
         return next(invalidTag)
       }
       return next(err)
@@ -114,7 +116,7 @@ async function getAllTags(req, res, next) {
       where: {
         userId,
       },
-      include: {posts: true},
+      include: { posts: true },
       orderBy: {
         updatedAt: 'desc',
       },
@@ -138,9 +140,7 @@ async function getEditTagForm(req, res, next) {
 
     // Make sure tagId is a number
     if (!isInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 
@@ -193,7 +193,7 @@ const updateTag = [
       return res.status(400).json({
         success: false,
         title: 'Edit Tag',
-        tag: {name},
+        tag: { name },
         errors: errors.array(),
       })
     }
@@ -207,9 +207,7 @@ const updateTag = [
 
       // Make sure tagId is a number
       if (!isInt) {
-        const badRequest = new BadRequestError(
-          'The web address looks invalid. Please check the URL and try again.'
-        )
+        const badRequest = new BadRequestError()
         return next(badRequest)
       }
 
@@ -220,7 +218,7 @@ const updateTag = [
           userId: userId,
         },
         data: {
-          name
+          name,
         },
       })
 
@@ -252,9 +250,7 @@ async function deleteTag(req, res, next) {
 
     // Make sure tagId is a number
     if (!isInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 

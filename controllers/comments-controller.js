@@ -83,9 +83,7 @@ const createNewComment = [
     } catch (err) {
       // If post id or user id doesn't match it throws error with code P2025
       if (err.code === 'P2025') {
-        const badRequest = new BadRequestError(
-          'The web address looks invalid. Please check the URL and try again.'
-        )
+        const badRequest = new BadRequestError()
         return next(badRequest)
       }
       return next(err)
@@ -104,9 +102,7 @@ async function getEditCommentForm(req, res, next) {
 
     // Make sure postId and commentId are numbers
     if (!isPostInt || !isCommentInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 
@@ -127,9 +123,7 @@ async function getEditCommentForm(req, res, next) {
 
     // Comment doesn't belong to the specific post
     if (comment.postId !== postId) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 
@@ -183,9 +177,7 @@ const updateComment = [
 
       // Make sure postId and commentId are numbers
       if (!isPostInt || !isCommentInt) {
-        const badRequest = new BadRequestError(
-          'The web address looks invalid. Please check the URL and try again.'
-        )
+        const badRequest = new BadRequestError()
         return next(badRequest)
       }
 
@@ -230,9 +222,7 @@ async function deleteComment(req, res, next) {
 
     // Make sure postId and commentId are numbers
     if (!isPostInt || !isCommentInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 

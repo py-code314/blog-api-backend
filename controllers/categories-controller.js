@@ -143,9 +143,7 @@ async function getEditCategoryForm(req, res, next) {
 
     // Make sure categoryId is a number
     if (!isInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 
@@ -212,9 +210,7 @@ const updateCategory = [
 
       // Make sure categoryId is a number
       if (!isInt) {
-        const badRequest = new BadRequestError(
-          'The web address looks invalid. Please check the URL and try again.'
-        )
+        const badRequest = new BadRequestError()
         return next(badRequest)
       }
 
@@ -257,9 +253,7 @@ async function deleteCategory(req, res, next) {
 
     // Make sure categoryId is a number
     if (!isInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 

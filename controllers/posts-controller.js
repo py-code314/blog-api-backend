@@ -122,9 +122,7 @@ const createNewPost = [
     } catch (err) {
       // Prisma throws error with code P2025 if userId is invalid in the query
       if (err.code === 'P2025') {
-        const badRequest = new BadRequestError(
-          'The web address looks invalid. Please check the URL and try again.'
-        )
+        const badRequest = new BadRequestError()
         return next(badRequest)
       }
       return next(err)
@@ -186,9 +184,7 @@ async function getPublicPostById(req, res, next) {
 
     // Make sure postId is a number
     if (!isInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 
@@ -227,9 +223,7 @@ async function getAuthorPostById(req, res, next) {
 
     // Make sure postId is a number
     if (!isInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 
@@ -268,9 +262,7 @@ async function getEditPostForm(req, res, next) {
 
     // Make sure postId is a number
     if (!isInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 
@@ -346,9 +338,7 @@ const updatePost = [
 
       // Make sure postId is a number
       if (!isInt) {
-        const badRequest = new BadRequestError(
-          'The web address looks invalid. Please check the URL and try again.'
-        )
+        const badRequest = new BadRequestError()
         return next(badRequest)
       }
 
@@ -418,9 +408,7 @@ async function deletePost(req, res, next) {
 
     // Make sure postId is a number
     if (!isInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 

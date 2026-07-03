@@ -67,9 +67,7 @@ const createNewProfile = [
       })
     } catch (err) {
       if (err.code === 'P2025') {
-        const badRequest = new BadRequestError(
-          'The web address looks invalid. Please check the URL and try again.'
-        )
+        const badRequest = new BadRequestError()
         return next(badRequest)
       }
       return next(err)
@@ -89,9 +87,7 @@ async function getProfileById(req, res, next) {
 
     // Make sure profileId is a number
     if (!isInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 
@@ -145,9 +141,7 @@ async function getEditProfileForm(req, res, next) {
 
     // Make sure profileId is a number
     if (!isInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 
@@ -213,9 +207,7 @@ const updateProfile = [
 
       // Make sure profileId is a number
       if (!isInt) {
-        const badRequest = new BadRequestError(
-          'The web address looks invalid. Please check the URL and try again.'
-        )
+        const badRequest = new BadRequestError()
         return next(badRequest)
       }
 
@@ -258,9 +250,7 @@ async function deleteProfile(req, res, next) {
 
     // Make sure profileId is a number
     if (!isInt) {
-      const badRequest = new BadRequestError(
-        'The web address looks invalid. Please check the URL and try again.'
-      )
+      const badRequest = new BadRequestError()
       return next(badRequest)
     }
 
