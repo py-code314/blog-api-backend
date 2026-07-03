@@ -5,6 +5,7 @@ import BadRequestError from '../errors/request-error.js'
 import RecordNotFoundError from '../errors/resource-error.js'
 import AuthorizationError from '../errors/authorization-error.js'
 import verifyToken from '../utils/verify-token.js'
+import DuplicateError from '../errors/duplicate-error.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -19,7 +20,14 @@ const validateCategory = [
     .withMessage(`Name ${emptyErr}`)
     .bail()
     .isAlphanumeric('en-US', { ignore: '- &' })
-    .withMessage(`Name ${alphanumericErr}`),
+    .withMessage(`Name ${alphanumericErr}`)
+    .customSanitizer((value) =>
+      value
+        .replace(/\s+/g, ' ')
+        .replace(/-+/g, '-')
+        .replace(/^[-&]+|[-&]+$/g, '')
+        .trim()
+    ),
 ]
 
 /* Show category form */
@@ -55,12 +63,18 @@ const createNewCategory = [
     try {
       // Get validated form data
       const { name } = matchedData(req)
+      const slug = name
+        .toLowerCase()
+        .replace(/[\s&]+/g, '-') // Replace ampersand with hyphen
+        .replace(/-+/g, '-') // Replace multiple hyphens with a single hyphen
+        .replace(/^-+|-+$/g, '') // Remove hyphens at start and end of the name
       const userId = req.user.id
-      
+
       // Add category to db
       const category = await prisma.category.create({
         data: {
           name,
+          slug,
           user: {
             connect: { id: userId },
           },
@@ -77,6 +91,11 @@ const createNewCategory = [
           'You do not have permission to create a new category. Please log in and try again.'
         )
         return next(invalidUser)
+      } else if (err.code === 'P2002') {
+        const invalidCategory = new DuplicateError(
+          'A category with that name already exists. Please choose a different name.'
+        )
+        return next(invalidCategory)
       }
       return next(err)
     }
@@ -95,7 +114,7 @@ async function getAllCategories(req, res, next) {
       orderBy: {
         updatedAt: 'desc',
       },
-      include: {posts: true}
+      include: { posts: true },
     }
 
     // Logged in user gets their own categories
@@ -104,9 +123,7 @@ async function getAllCategories(req, res, next) {
     }
 
     // Get all categories
-    const categories = await prisma.category.findMany(
-      queryOptions
-    )
+    const categories = await prisma.category.findMany(queryOptions)
 
     return res.json({
       success: true,
@@ -181,7 +198,7 @@ const updateCategory = [
       return res.status(400).json({
         success: false,
         title: 'Edit Category',
-        category: {name},
+        category: { name },
         errors: errors.array(),
       })
     }
@@ -208,7 +225,7 @@ const updateCategory = [
           userId: userId,
         },
         data: {
-          name
+          name,
         },
       })
 
