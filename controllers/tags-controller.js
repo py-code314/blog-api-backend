@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma.js'
 import AuthorizationError from '../errors/authorization-error.js'
 import BadRequestError from '../errors/request-error.js'
 import RecordNotFoundError from '../errors/resource-error.js'
+import DuplicateError from '../errors/duplicate-error.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -21,7 +22,9 @@ const validateTag = [
     .withMessage(`Name ${alphanumericErr}`)
     .bail()
     .isLowercase()
-    .withMessage(`Name ${lowercaseErr}`),
+    .withMessage(`Name ${lowercaseErr}`)
+    .toLowerCase()
+    .customSanitizer((value) => value.replace(/\s+/g, '-')),
 ]
 
 /* Show new tag form */
@@ -79,6 +82,9 @@ const createNewTag = [
           'You do not have permission to create a new tag. Please log in and try again.'
         )
         return next(invalidUser)
+      } else if (err.code === 'P2002') {
+        const invalidTag = new DuplicateError('A tag with that name already exists. Please choose a different name.')
+        return next(invalidTag)
       }
       return next(err)
     }
