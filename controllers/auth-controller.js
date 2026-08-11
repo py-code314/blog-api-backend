@@ -85,33 +85,17 @@ const validateLogin = [
  * -------------- SIGN-UP ----------------
  */
 
-/* Show sign up form */
-async function getSignupForm(req, res) {
-  res.json({
-    title: 'Sign-up',
-  })
-}
-
 /* Validate and add new user */
 const registerUser = [
   validateSignup,
 
   async (req, res, next) => {
-    // Get form data except password
-    const { email, name } = req.body
-    const signupData = {
-      email,
-      name,
-    }
-
     // Validate request
     const errors = validationResult(req)
 
     // Show errors if validation fails
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        title: 'Sign-up',
-        user: signupData,
         errors: errors.array(),
       })
     }
@@ -138,6 +122,7 @@ const registerUser = [
       })
 
       res.json({
+        success: true,
         message: 'User successfully added',
       })
     } catch (err) {
@@ -159,21 +144,6 @@ const registerUser = [
  * -------------- LOG-IN ----------------
  */
 
-/* Show log in form */
-async function getLoginForm(req, res) {
-  // req.user = true
-  // User is already logged in
-  if (req.user) {
-    return res.json({ title: 'Home' })
-  }
-
-  console.log(req.session.message)
-
-  res.json({
-    title: 'Log In',
-  })
-}
-
 /* Validate and authenticate user */
 const loginUser = [
   validateLogin,
@@ -187,8 +157,7 @@ const loginUser = [
     // Show errors if validation fails
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        title: 'Log-in',
-        user: { email },
+        validData: false, // LA
         errors: errors.array(),
       })
     }
@@ -215,8 +184,7 @@ const loginUser = [
         // Email or password doesn't match
         if (!user) {
           return res.status(401).json({
-            success: false,
-            title: 'Login',
+            auth: false,
             user: { email },
             errorMsg: info.message,
           })
@@ -232,11 +200,13 @@ const loginUser = [
           process.env.JWT_SECRET,
           { expiresIn: '1d' },
           (err, token) => {
+            // err = true
             // Handle error
             if (err) {
               return res.status(500).json({
-                success: false,
-                msg: 'Failed to generate authentication token. Please try again.',
+                jwt: false,
+                errorMsg:
+                  'Failed to generate authentication token. Please try again.',
               })
             }
             // JWT successfully generated
@@ -248,7 +218,6 @@ const loginUser = [
             }
             return res.json({
               success: true,
-              title: 'Home',
               msg: 'Successfully logged in',
               user: safeUserData,
               token,
@@ -260,4 +229,4 @@ const loginUser = [
   },
 ]
 
-export { getSignupForm, registerUser, getLoginForm, loginUser }
+export { registerUser, loginUser }
