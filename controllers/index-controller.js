@@ -23,7 +23,7 @@ import {
 import {
   getNewProfileForm,
   createNewProfile,
-  getProfileByUserId,
+  getMyProfile,
   getProfileById,
   getEditProfileForm,
   updateProfile,
@@ -66,7 +66,7 @@ export {
   getNewProfileForm,
   createNewProfile,
   getProfileById,
-  getProfileByUserId,
+  getMyProfile,
   getEditProfileForm,
   updateProfile,
   deleteProfile,

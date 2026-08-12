@@ -12,7 +12,7 @@ profilesRouter.get('/new', isAuth, controllers.getNewProfileForm)
 profilesRouter.post('/new', isAuth, controllers.createNewProfile)
 
 // Get self profile
-profilesRouter.get('/me', controllers.getProfileByUserId)
+profilesRouter.get('/me', controllers.getMyProfile)
 // Show a specific profile
 profilesRouter.get('/:profileId', controllers.getProfileById)
 

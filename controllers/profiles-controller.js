@@ -130,7 +130,7 @@ async function getProfileById(req, res, next) {
 }
 
 /* Get self profile */
-async function getProfileByUserId(req, res, next) {
+async function getMyProfile(req, res, next) {
   try {
     // Get user id
     const userData = await verifyToken(req)
@@ -335,7 +335,7 @@ export {
   getNewProfileForm,
   createNewProfile,
   getProfileById,
-  getProfileByUserId,
+  getMyProfile,
   getEditProfileForm,
   updateProfile,
   deleteProfile,
