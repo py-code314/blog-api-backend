@@ -11,8 +11,11 @@ const profilesRouter = Router()
 profilesRouter.get('/new', isAuth, controllers.getNewProfileForm)
 profilesRouter.post('/new', isAuth, controllers.createNewProfile)
 
+// Get self profile
+profilesRouter.get('/me', controllers.getProfileByUserId)
 // Show a specific profile
 profilesRouter.get('/:profileId', controllers.getProfileById)
+
 
 // Update a specific profile
 profilesRouter.get('/:profileId/update', isAuth, controllers.getEditProfileForm)

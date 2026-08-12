@@ -129,6 +129,46 @@ async function getProfileById(req, res, next) {
   }
 }
 
+/* Get self profile */
+async function getProfileByUserId(req, res, next) {
+  try {
+    // Get user id
+    const userData = await verifyToken(req)
+    const userId = userData?.sub
+
+    // Get profile with user id
+    const profile = await prisma.profile.findUnique({
+      where: {
+        userId: userId,
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+            posts: true,
+          },
+        },
+      },
+    })
+
+    // Throw error if profile is not found
+    if (!profile) {
+      const invalidProfile = new RecordNotFoundError(
+        'The profile you are looking for no longer exists.'
+      )
+      return next(invalidProfile)
+    }
+
+    res.json({
+      success: true,
+      profile,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 /* Show profile form for editing */
 async function getEditProfileForm(req, res, next) {
   try {
@@ -295,6 +335,7 @@ export {
   getNewProfileForm,
   createNewProfile,
   getProfileById,
+  getProfileByUserId,
   getEditProfileForm,
   updateProfile,
   deleteProfile,

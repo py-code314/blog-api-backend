@@ -1,7 +1,5 @@
 import {
-  getSignupForm,
   registerUser,
-  getLoginForm,
   loginUser,
 } from './auth-controller.js'
 import {
@@ -25,6 +23,7 @@ import {
 import {
   getNewProfileForm,
   createNewProfile,
+  getProfileByUserId,
   getProfileById,
   getEditProfileForm,
   updateProfile,
@@ -48,9 +47,7 @@ import {
 } from './tags-controller.js'
 
 export {
-  getSignupForm,
   registerUser,
-  getLoginForm,
   loginUser,
   getNewPostForm,
   createNewPost,
@@ -69,6 +66,7 @@ export {
   getNewProfileForm,
   createNewProfile,
   getProfileById,
+  getProfileByUserId,
   getEditProfileForm,
   updateProfile,
   deleteProfile,
