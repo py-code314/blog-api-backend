@@ -13,7 +13,7 @@ const lengthErr = 'must be at least 8 characters long.'
 const emailInvalidErr = 'is invalid.'
 const passwordInvalidErr =
   'must contain an uppercase letter, a number, and a special character.'
-const alphaErr = 'must contain only letters.'
+const alphaErr = 'Only letters, spaces, and hyphen are allowed in a name.'
 
 /* Validate sign up form data */
 const validateSignup = [
@@ -47,7 +47,7 @@ const validateSignup = [
     .withMessage(`Name ${emptyErr}`)
     .bail()
     .isAlpha('en-US', { ignore: ' -' })
-    .withMessage(`First Name ${alphaErr}`),
+    .withMessage(`${alphaErr}`),
   body('password')
     .trim()
     .notEmpty()
