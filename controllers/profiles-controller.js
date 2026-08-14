@@ -133,8 +133,7 @@ async function getProfileById(req, res, next) {
 async function getMyProfile(req, res, next) {
   try {
     // Get user id
-    const userData = await verifyToken(req)
-    const userId = userData?.sub
+    const userId = req.user.id
 
     // Get profile with user id
     const profile = await prisma.profile.findUnique({
