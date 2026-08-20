@@ -8,7 +8,6 @@ import verifyTagIds from '../utils/tags.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
-const booleanErr = 'must be true or false.'
 const arrErr = 'must be an array of IDs.'
 const intErr = 'must be an integer.'
 
@@ -17,10 +16,9 @@ const validatePost = [
   body('title').trim().notEmpty().withMessage(`Title ${emptyErr}`),
   body('content').trim().notEmpty().withMessage(`Post content ${emptyErr}`),
   body('published')
-    .optional({ values: 'null' })
     .trim()
     .isBoolean()
-    .withMessage(`published ${booleanErr}`)
+    .withMessage(`You must choose either Yes or No.`)
     .toBoolean(),
   body('categories')
     .optional({ values: 'falsy' })
@@ -30,11 +28,47 @@ const validatePost = [
     .isInt()
     .withMessage(`Each category ID ${intErr}`)
     .toInt(),
+  body('categories').custom(async (categories) => {
+    // Check for categories
+    const count = await prisma.category.count({
+      where: {
+        id: {
+          in: categories,
+        },
+      },
+    })
+
+    // Throw error if categories don't match
+    if (count !== categories.length) {
+      throw new Error('One or more categories do not exist.')
+    }
+    /* Express custom validators must return a truthy value to
+     indicate that the field is valid, or falsy to indicate it's invalid */
+    return true
+  }),
   body('tags')
     .optional({ values: 'falsy' })
     .isArray()
     .withMessage(`Tags ${arrErr}`),
   body('tags.*').isInt().withMessage(`Each tag ID ${intErr}`).toInt(),
+  body('tags').custom(async (tags) => {
+    // Check for tags
+    const count = await prisma.tag.count({
+      where: {
+        id: {
+          in: tags,
+        },
+      },
+    })
+
+    // Throw error if tags don't match
+    if (count !== tags.length) {
+      throw new Error('One or more tags do not exist.')
+    }
+    /* Express custom validators must return a truthy value to indicate
+     that the field is valid, or falsy to indicate it's invalid */
+    return true
+  }),
 ]
 
 /* Show blog post form */
@@ -51,25 +85,13 @@ const createNewPost = [
   validatePost,
 
   async (req, res, next) => {
-    // Get form data
-    const { title, content, published, categories, tags } = req.body
-    const postData = {
-      title,
-      content,
-      published,
-      categories,
-      tags,
-    }
-
     // Validate request
     const errors = validationResult(req)
 
     // Show errors if validation fails
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        success: false,
-        title: 'New Post',
-        postData,
+        validData: false,
         errors: errors.array(),
       })
     }

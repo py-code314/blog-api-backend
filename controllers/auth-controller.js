@@ -36,8 +36,7 @@ const validateSignup = [
         throw new Error(`Email is ${existsErr}`)
       }
 
-      // Express custom validators must return a truthy value to
-      // indicate that the field is valid, or falsy to indicate it's invalid
+      /* Express custom validators must return a truthy value to indicate that the field is valid, or falsy to indicate it's invalid */
       return true
     }),
   body('name')
