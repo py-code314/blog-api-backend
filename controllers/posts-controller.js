@@ -142,6 +142,7 @@ const createNewPost = [
         post,
       })
     } catch (err) {
+      console.error(err)
       // Prisma throws error with code P2025 if userId is invalid in the query
       if (err.code === 'P2025') {
         const badRequest = new BadRequestError()
