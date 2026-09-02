@@ -16,7 +16,7 @@ postsRouter.get('/me', isAuth, controllers.getAuthorPosts)
 postsRouter.get('/', controllers.getPublicPosts)
 
 // Get a specific post
-postsRouter.get('/:postId/me', isAuth, controllers.getAuthorPostById)
+postsRouter.get('/me/:postId', isAuth, controllers.getAuthorPostById)
 postsRouter.get('/:postId', controllers.getPublicPostById)
 
 // Update a specific post
