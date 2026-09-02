@@ -21,7 +21,8 @@ postsRouter.get('/:postId', controllers.getPublicPostById)
 
 // Update a specific post
 postsRouter.get('/:postId/update', isAuth, controllers.getEditPostForm)
-postsRouter.put('/:postId/update', isAuth, controllers.updatePost)
+postsRouter.post('/:postId/update', isAuth, controllers.updatePost)
+// postsRouter.put('/:postId/update', isAuth, controllers.updatePost)
 
 // Delete a post
 postsRouter.delete('/:postId/delete', isAuth, controllers.deletePost)

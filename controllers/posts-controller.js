@@ -328,15 +328,6 @@ const updatePost = [
   validatePost,
 
   async (req, res, next) => {
-    // Get form data
-    const { title, content, published, categories, tags } = req.body
-    const postData = {
-      title,
-      content,
-      published,
-      categories,
-      tags,
-    }
 
     // Validate request
     const errors = validationResult(req)
@@ -345,8 +336,6 @@ const updatePost = [
     if (!errors.isEmpty()) {
       return res.status(400).json({
         success: false,
-        title: 'Edit Post',
-        postData,
         errors: errors.array(),
       })
     }
@@ -479,7 +468,6 @@ export {
   getAuthorPosts,
   getPublicPostById,
   getAuthorPostById,
-  // getPostById,
   getEditPostForm,
   updatePost,
   deletePost,
