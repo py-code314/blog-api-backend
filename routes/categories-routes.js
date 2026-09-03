@@ -13,6 +13,9 @@ categoriesRouter.post('/new', isAuth, controllers.createNewCategory)
 // Show all categories
 categoriesRouter.get('/all', controllers.getAllCategories)
 
+// Get a category
+categoriesRouter.get('/:categoryId', isAuth, controllers.getCategoryById)
+
 // Update a category
 categoriesRouter.get('/:categoryId/update', isAuth, controllers.getEditCategoryForm)
 categoriesRouter.put('/:categoryId/update', isAuth, controllers.updateCategory)

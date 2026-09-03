@@ -134,6 +134,44 @@ async function getAllCategories(req, res, next) {
   }
 }
 
+/* Get category by id */
+async function getCategoryById(req, res, next) {
+  try {
+    const categoryId = Number(req.params.categoryId)
+    const isInt = Number.isInteger(categoryId)
+    const userId = Number(req.user.id)
+
+    // Make sure categoryId is a number
+    if (!isInt) {
+      const badRequest = new BadRequestError()
+      return next(badRequest)
+    }
+
+    // Get category by id
+    const category = await prisma.category.findUnique({
+      where: {
+        id: categoryId,
+        userId,
+      },
+    })
+
+    // Throw error if category is not found
+    if (!category) {
+      const invalidCategory = new RecordNotFoundError(
+        'The category you are looking for no longer exists.'
+      )
+      return next(invalidCategory)
+    }
+
+    return res.json({
+      success: true,
+      category,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 /* Get category data for editing */
 async function getEditCategoryForm(req, res, next) {
   try {
@@ -298,6 +336,7 @@ export {
   getNewCategoryForm,
   createNewCategory,
   getAllCategories,
+  getCategoryById,
   getEditCategoryForm,
   updateCategory,
   deleteCategory,
