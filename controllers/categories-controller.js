@@ -50,6 +50,7 @@ const createNewCategory = [
     // Validate request
     const errors = validationResult(req)
 
+    // TODO: Add 'validData: false'
     // Show errors if validation fails
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -223,18 +224,14 @@ const updateCategory = [
   validateCategory,
 
   async (req, res, next) => {
-    // Get form data
-    const { name } = req.body
-
     // Validate request
     const errors = validationResult(req)
 
     // Show errors if validation fails
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        success: false,
-        title: 'Edit Category',
-        category: { name },
+        validData: false,
+        msg: 'Invalid data received',
         errors: errors.array(),
       })
     }
@@ -242,6 +239,11 @@ const updateCategory = [
     try {
       // Get validated form data
       const { name } = matchedData(req)
+      const slug = name
+        .toLowerCase()
+        .replace(/[\s&]+/g, '-') // Replace ampersand with hyphen
+        .replace(/-+/g, '-') // Replace multiple hyphens with a single hyphen
+        .replace(/^-+|-+$/g, '') // Remove hyphens at start and end of the name
       const userId = req.user.id
       const categoryId = Number(req.params.categoryId)
       const isInt = Number.isInteger(categoryId)
@@ -260,6 +262,7 @@ const updateCategory = [
         },
         data: {
           name,
+          slug 
         },
       })
 

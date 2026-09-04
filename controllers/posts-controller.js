@@ -328,10 +328,10 @@ const updatePost = [
   validatePost,
 
   async (req, res, next) => {
-
     // Validate request
     const errors = validationResult(req)
 
+    // TODO: Add 'validData: false'
     // Show errors if validation fails
     if (!errors.isEmpty()) {
       return res.status(400).json({

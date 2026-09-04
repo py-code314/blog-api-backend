@@ -18,7 +18,8 @@ categoriesRouter.get('/:categoryId', isAuth, controllers.getCategoryById)
 
 // Update a category
 categoriesRouter.get('/:categoryId/update', isAuth, controllers.getEditCategoryForm)
-categoriesRouter.put('/:categoryId/update', isAuth, controllers.updateCategory)
+categoriesRouter.post('/:categoryId/update', isAuth, controllers.updateCategory)
+// categoriesRouter.put('/:categoryId/update', isAuth, controllers.updateCategory)
 
 // Delete a category
 categoriesRouter.delete('/:categoryId/delete', isAuth, controllers.deleteCategory)
