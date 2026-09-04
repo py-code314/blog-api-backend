@@ -44,19 +44,13 @@ const createNewCategory = [
   validateCategory,
 
   async (req, res, next) => {
-    // Get form data
-    const { name } = req.body
-
     // Validate request
     const errors = validationResult(req)
 
-    // TODO: Add 'validData: false'
     // Show errors if validation fails
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        success: false,
-        title: 'New Category',
-        category: { name },
+        validData: false,
         errors: errors.array(),
       })
     }
@@ -262,7 +256,7 @@ const updateCategory = [
         },
         data: {
           name,
-          slug 
+          slug,
         },
       })
 
