@@ -18,7 +18,8 @@ tagsRouter.get('/:tagId', isAuth, controllers.getTagById)
 
 // Update a tag
 tagsRouter.get('/:tagId/update', controllers.getEditTagForm)
-tagsRouter.put('/:tagId/update', controllers.updateTag)
+tagsRouter.post('/:tagId/update', controllers.updateTag)
+// tagsRouter.put('/:tagId/update', controllers.updateTag)
 
 // Delete a tag
 tagsRouter.delete('/:tagId/delete', controllers.deleteTag)
