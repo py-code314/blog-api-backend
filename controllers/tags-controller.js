@@ -131,6 +131,44 @@ async function getAllTags(req, res, next) {
   }
 }
 
+/* Get tag by id */
+async function getTagById(req, res, next) {
+  try {
+    const tagId = Number(req.params.tagId)
+    const isInt = Number.isInteger(tagId)
+    const userId = Number(req.user.id)
+
+    // Make sure tagId is a number
+    if (!isInt) {
+      const badRequest = new BadRequestError()
+      return next(badRequest)
+    }
+
+    // Get tag by id
+    const tag = await prisma.tag.findUnique({
+      where: {
+        id: tagId,
+        userId,
+      },
+    })
+
+    // Throw error if tag is not found
+    if (!tag) {
+      const invalidTag = new RecordNotFoundError(
+        'The tag you are looking for no longer exists.'
+      )
+      return next(invalidTag)
+    }
+
+    return res.json({
+      success: true,
+      tag,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 /* Get tag data for editing */
 async function getEditTagForm(req, res, next) {
   try {
@@ -295,6 +333,7 @@ export {
   getNewTagForm,
   createNewTag,
   getAllTags,
+  getTagById,
   getEditTagForm,
   updateTag,
   deleteTag,

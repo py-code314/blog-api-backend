@@ -13,6 +13,9 @@ tagsRouter.post('/new', controllers.createNewTag)
 // Show all tags
 tagsRouter.get('/all', controllers.getAllTags)
 
+// Get a tag
+tagsRouter.get('/:tagId', isAuth, controllers.getTagById)
+
 // Update a tag
 tagsRouter.get('/:tagId/update', controllers.getEditTagForm)
 tagsRouter.put('/:tagId/update', controllers.updateTag)
