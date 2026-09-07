@@ -12,6 +12,8 @@ postsRouter.post('/new', isAuth, controllers.createNewPost)
 
 // Get all author posts
 postsRouter.get('/me', isAuth, controllers.getAuthorPosts)
+// Get all author published posts
+postsRouter.get('/me/published', isAuth, controllers.getAuthorPublishedPosts)
 // Get all public posts
 postsRouter.get('/', controllers.getPublicPosts)
 // Get 2 most recent posts
