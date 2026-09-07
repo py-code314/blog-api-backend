@@ -199,6 +199,31 @@ async function getAuthorPosts(req, res, next) {
   }
 }
 
+// Get 2 most recent posts
+async function getRecentPosts(req, res, next) {
+  try {
+    const userId = req.user?.id
+
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId: userId,
+      },
+      include: { categories: true, comments: true, tags: true },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      take: 2,
+    })
+
+    return res.json({
+      success: true,
+      posts,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 /* Get a public post by id */
 async function getPublicPostById(req, res, next) {
   try {
@@ -466,6 +491,7 @@ export {
   createNewPost,
   getPublicPosts,
   getAuthorPosts,
+  getRecentPosts,
   getPublicPostById,
   getAuthorPostById,
   getEditPostForm,
