@@ -35,6 +35,7 @@ app.use('/api/v1/posts/:postId/comments', routes.commentsRouter)
 app.use('/api/v1/profiles', routes.profilesRouter)
 app.use('/api/v1/categories', routes.categoriesRouter)
 app.use('/api/v1/tags', routes.tagsRouter)
+app.use('/api/v1/stats', routes.statsRouter)
 
 /**
  * -------------- ERROR HANDLER MIDDLEWARE ----------------
