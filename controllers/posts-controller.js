@@ -224,6 +224,31 @@ async function getAuthorPublishedPosts(req, res, next) {
   }
 }
 
+// Get all author unpublished posts 
+async function getAuthorDrafts(req, res, next) {
+  try {
+    const userId = req.user?.id
+
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId: userId,
+        published: false
+      },
+      include: { categories: true, comments: true, tags: true },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
+
+    return res.json({
+      success: true,
+      posts,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 // Get 2 most recent posts
 async function getRecentPosts(req, res, next) {
   try {
@@ -518,6 +543,7 @@ export {
   getPublicPosts,
   getAuthorPosts,
   getAuthorPublishedPosts,
+  getAuthorDrafts,
   getRecentPosts,
   getPublicPostById,
   getAuthorPostById,
