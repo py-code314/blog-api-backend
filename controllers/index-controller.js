@@ -50,6 +50,7 @@ import {
   updateTag,
   deleteTag,
 } from './tags-controller.js'
+import { getAllStats } from './stats-controller.js'
 
 export {
   registerUser,
@@ -92,4 +93,5 @@ export {
   getEditTagForm,
   updateTag,
   deleteTag,
+  getAllStats,
 }

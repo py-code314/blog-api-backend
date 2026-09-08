@@ -264,7 +264,7 @@ async function getRecentPosts(req, res, next) {
       },
       take: 2,
     })
-    console.log("🚀 ~ getRecentPosts ~ posts:", posts)
+    // console.log("🚀 ~ getRecentPosts ~ posts:", posts)
 
     return res.json({
       success: true,
