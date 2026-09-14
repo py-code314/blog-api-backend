@@ -199,7 +199,7 @@ async function getAuthorPosts(req, res, next) {
   }
 }
 
-// Get all author published posts 
+// Get all author published posts
 async function getAuthorPublishedPosts(req, res, next) {
   try {
     const userId = req.user?.id
@@ -207,7 +207,7 @@ async function getAuthorPublishedPosts(req, res, next) {
     const posts = await prisma.post.findMany({
       where: {
         authorId: userId,
-        published: true
+        published: true,
       },
       include: { categories: true, comments: true, tags: true },
       orderBy: {
@@ -224,7 +224,7 @@ async function getAuthorPublishedPosts(req, res, next) {
   }
 }
 
-// Get all author unpublished posts 
+// Get all author unpublished posts
 async function getAuthorDrafts(req, res, next) {
   try {
     const userId = req.user?.id
@@ -232,7 +232,7 @@ async function getAuthorDrafts(req, res, next) {
     const posts = await prisma.post.findMany({
       where: {
         authorId: userId,
-        published: false
+        published: false,
       },
       include: { categories: true, comments: true, tags: true },
       orderBy: {
@@ -407,11 +407,10 @@ const updatePost = [
     // Validate request
     const errors = validationResult(req)
 
-    // TODO: Add 'validData: false'
     // Show errors if validation fails
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        success: false,
+        validData: false,
         errors: errors.array(),
       })
     }

@@ -31,9 +31,6 @@ const createNewProfile = [
   validateProfile,
 
   async (req, res, next) => {
-    // Get form data
-    const { bio } = req.body
-
     // Validate request
     const errors = validationResult(req)
 
@@ -41,8 +38,6 @@ const createNewProfile = [
     if (!errors.isEmpty()) {
       return res.status(400).json({
         success: false,
-        title: 'New Profile',
-        profile: { bio },
         errors: errors.array(),
       })
     }
@@ -52,16 +47,14 @@ const createNewProfile = [
       const { bio } = matchedData(req)
       const userId = req.user.id
 
-      // ? No need to add userId here
-      // Add profile to db
-      const profile = await prisma.profile.create({
+      // Add bio to profile
+      const profile = await prisma.profile.update({
+        where: { userId },
         data: {
           bio,
-          user: {
-            connect: { id: userId },
-          },
         },
       })
+
       return res.json({
         success: true,
         profile,
