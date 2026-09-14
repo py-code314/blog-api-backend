@@ -156,7 +156,7 @@ const loginUser = [
     // Show errors if validation fails
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        validData: false, // LA
+        validData: false,
         errors: errors.array(),
       })
     }
@@ -175,7 +175,6 @@ const loginUser = [
       'local',
       { session: false },
       async (err, user, info) => {
-        // console.log('🚀 ~ err, user, info:', err, user, info)
         if (err) {
           next(err)
         }
@@ -189,6 +188,19 @@ const loginUser = [
           })
         }
 
+        /* Create profile if there's no record with the same user id. 
+        Update email if profile already exists */
+        await prisma.profile.upsert({
+          where: { userId: user.id },
+          create: {
+            email: user.email,
+            user: {
+              connect: { id: user.id },
+            },
+          },
+          update: { email: user.email },
+        })
+
         // Don't add any mutable data to payload and keep it lean
         const userData = {
           sub: user.id,
@@ -199,7 +211,6 @@ const loginUser = [
           process.env.JWT_SECRET,
           { expiresIn: '1d' },
           (err, token) => {
-            // err = true
             // Handle error
             if (err) {
               return res.status(500).json({

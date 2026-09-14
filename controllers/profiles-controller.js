@@ -52,6 +52,7 @@ const createNewProfile = [
       const { bio } = matchedData(req)
       const userId = req.user.id
 
+      // ? No need to add userId here
       // Add profile to db
       const profile = await prisma.profile.create({
         data: {

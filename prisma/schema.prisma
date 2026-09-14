@@ -38,6 +38,7 @@ model User {
 
 model Profile {
   id  Int     @id @default(autoincrement())
+  email String @unique
   bio String?
 
   // Relations
