@@ -4,6 +4,7 @@ import { AuthenticationError } from '../errors/authentication-error.js'
 /* Check for valid user by verifying JWT */
 const isAuth = async (req, res, next) => {
   passport.authenticate('jwt', { session: false }, async (err, user, info) => {
+    console.log("🚀 ~ isAuth ~ err, user, info:", err, user, info)
     // Database error
     if (err) {
       next(err)

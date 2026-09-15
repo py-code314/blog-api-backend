@@ -19,7 +19,7 @@ postsRouter.get('/me/drafts', isAuth, controllers.getAuthorDrafts)
 // Get all public posts
 postsRouter.get('/', controllers.getPublicPosts)
 // Get 2 most recent posts
-postsRouter.get('/recent', controllers.getRecentPosts)
+postsRouter.get('/recent', isAuth, controllers.getRecentPosts)
 
 
 // Get a specific post

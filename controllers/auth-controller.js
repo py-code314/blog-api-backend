@@ -209,7 +209,8 @@ const loginUser = [
         jwt.sign(
           userData,
           process.env.JWT_SECRET,
-          { expiresIn: '1d' },
+          { expiresIn: 60 },
+          // { expiresIn: '1d' },
           (err, token) => {
             // Handle error
             if (err) {

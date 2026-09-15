@@ -252,11 +252,13 @@ async function getAuthorDrafts(req, res, next) {
 // Get 2 most recent posts
 async function getRecentPosts(req, res, next) {
   try {
-    const userId = req.user?.id
+    const userId = req.user.id
 
+    /* Convert userId to number to prevent the query running when it's value is undefined. When userId is undefined query still runs and gets all posts without any filtering applied. It throws error instead of silently returning all posts when it is converted to a number */
     const posts = await prisma.post.findMany({
+      // Filter posts by authorId using where clause
       where: {
-        authorId: userId,
+        authorId: Number(userId),
       },
       include: { categories: true, comments: true, tags: true },
       orderBy: {
@@ -264,7 +266,6 @@ async function getRecentPosts(req, res, next) {
       },
       take: 2,
     })
-    // console.log("🚀 ~ getRecentPosts ~ posts:", posts)
 
     return res.json({
       success: true,
