@@ -144,7 +144,6 @@ async function getMyProfile(req, res, next) {
         },
       },
     })
-    console.log('🚀 ~ getMyProfile ~ profile:', profile)
 
     // Throw error if profile is not found
     if (!profile) {
@@ -159,6 +158,7 @@ async function getMyProfile(req, res, next) {
       profile,
     })
   } catch (err) {
+    console.error(err)
     return next(err)
   }
 }

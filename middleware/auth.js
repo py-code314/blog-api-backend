@@ -4,7 +4,6 @@ import { AuthenticationError } from '../errors/authentication-error.js'
 /* Check for valid user by verifying JWT */
 const isAuth = async (req, res, next) => {
   passport.authenticate('jwt', { session: false }, async (err, user, info) => {
-    console.log("🚀 ~ isAuth ~ err, user, info:", err, user, info)
     // Database error
     if (err) {
       next(err)
@@ -21,6 +20,12 @@ const isAuth = async (req, res, next) => {
         'Your session has expired or is invalid. Please log in again to continue.'
       )
       return next(invalidTokenError)
+    } else if (info && info.message === 'jwt expired') {
+      // Expired JWT
+      const expiredTokenError = new AuthenticationError(
+        'Your session has expired or is invalid. Please log in again to continue.'
+      )
+      return next(expiredTokenError)
     }
     // Manually add user to request
     req.user = user

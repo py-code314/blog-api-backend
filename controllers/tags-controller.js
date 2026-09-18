@@ -41,18 +41,13 @@ const createNewTag = [
   validateTag,
 
   async (req, res, next) => {
-    // Get form data
-    const { name } = req.body
-
     // Validate request
     const errors = validationResult(req)
 
     // Show errors if validation fails
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        success: false,
-        title: 'New Tag',
-        tag: { name },
+        validData: false,
         errors: errors.array(),
       })
     }
