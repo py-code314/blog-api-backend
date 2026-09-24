@@ -249,7 +249,8 @@ async function getAuthorDrafts(req, res, next) {
   }
 }
 
-// Get 2 most recent posts
+// TODO: Add condition 'published: true' to where clause to make only published posts are retrieved
+// Get 2 most recent posts by author
 async function getRecentPosts(req, res, next) {
   try {
     const userId = req.user.id
@@ -276,13 +277,38 @@ async function getRecentPosts(req, res, next) {
   }
 }
 
+// Get 3 most recent posts by all authors
+async function getLatestPosts(req, res, next) {
+  try {
+    const posts = await prisma.post.findMany({
+      // Filter posts by published true
+      where: {
+        published: true,
+      },
+      include: { categories: true, comments: true, tags: true },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      take: 3,
+    })
+
+    return res.json({
+      success: true,
+      posts,
+    })
+  } catch (err) {
+    console.error(err)
+    return next(err)
+  }
+}
+
 /* Get a public post by id */
 async function getPublicPostById(req, res, next) {
   try {
     const postId = Number(req.params.postId)
-    console.log("🚀 ~ getPublicPostById ~ postId:", postId)
+    console.log('🚀 ~ getPublicPostById ~ postId:', postId)
     const isInt = Number.isInteger(postId)
-    console.log("🚀 ~ getPublicPostById ~ isInt:", isInt)
+    console.log('🚀 ~ getPublicPostById ~ isInt:', isInt)
 
     // Make sure postId is a number
     if (!isInt) {
@@ -547,6 +573,7 @@ export {
   getAuthorPublishedPosts,
   getAuthorDrafts,
   getRecentPosts,
+  getLatestPosts,
   getPublicPostById,
   getAuthorPostById,
   getEditPostForm,
