@@ -40,7 +40,6 @@ const validateSignup = [
       return true
     }),
   body('name')
-    .optional({ values: 'falsy' })
     .trim()
     .notEmpty()
     .withMessage(`Name ${emptyErr}`)
