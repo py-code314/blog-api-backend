@@ -1,6 +1,6 @@
 /* Express error handler middleware */
 const errorHandler = (err, req, res, next) => {
-  console.error(err)
+  // console.error(err)
 
   /* Check if headers have already been sent to avoid "Can't set
    headers after they are sent" errors */
@@ -10,8 +10,8 @@ const errorHandler = (err, req, res, next) => {
 
   // Error data
   let statusCode = err.statusCode || 500
-  let errorMessage = err.message || 'Internal Server Error'
-  let errorTitle = err.title || 'Connection Terminated'
+  let errorMessage = err.message || 'We encountered an unexpected problem. Please try again.' 
+  let errorTitle = err.title || 'Internal Server Error'
 
   return res.status(statusCode).json({
     success: false,

@@ -32,6 +32,7 @@ const validateSignup = [
           email,
         },
       })
+      // console.log("🚀 ~ existingUser:", existingUser)
       if (existingUser) {
         throw new Error(`Email is ${existsErr}`)
       }
@@ -94,6 +95,10 @@ const registerUser = [
     // Show errors if validation fails
     if (!errors.isEmpty()) {
       return res.status(400).json({
+        success: false,
+        errorCode: 400,
+        errorTitle: 'Invalid Form Data',
+        errorMessage: 'Invalid form fields. Please try again.',
         errors: errors.array(),
       })
     }
@@ -121,10 +126,11 @@ const registerUser = [
 
       res.json({
         success: true,
-        message: 'User successfully added',
+        successMessage: 'Signup successful.',
+
       })
     } catch (err) {
-      // console.error(err)
+      console.error(err)
       if (err.code === 'ECONNREFUSED') {
         const dbError = new DatabaseConnectionError(
           'Failed to connect to the database. Please try again later.'
