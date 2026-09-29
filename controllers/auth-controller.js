@@ -127,7 +127,6 @@ const registerUser = [
       res.json({
         success: true,
         successMessage: 'Signup successful.',
-
       })
     } catch (err) {
       console.error(err)
@@ -162,6 +161,9 @@ const loginUser = [
     if (!errors.isEmpty()) {
       return res.status(400).json({
         validData: false,
+        errorCode: 400,
+        errorTitle: 'Invalid Form Data',
+        errorMessage: 'Invalid form fields. Please try again.',
         errors: errors.array(),
       })
     }
@@ -188,8 +190,11 @@ const loginUser = [
         if (!user) {
           return res.status(401).json({
             auth: false,
-            user: { email },
+            errorCode: 400,
+            errorTitle: 'Authentication Error',
             errorMsg: info.message,
+            errorMessage: 'One or both credentials are wrong',
+            user: { email },
           })
         }
 
@@ -217,12 +222,14 @@ const loginUser = [
           { expiresIn: 60 },
           // { expiresIn: '1d' },
           (err, token) => {
-            // Handle error
+            // Error generating JWT token
             if (err) {
               return res.status(500).json({
                 jwt: false,
+                errorCode: 500,
+                errorTitle: 'Server Error',
                 errorMsg:
-                  'Failed to generate authentication token. Please try again.',
+                  'An unexpected server error occurred. Please try again.',
               })
             }
             // JWT successfully generated
