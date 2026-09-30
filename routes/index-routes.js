@@ -5,6 +5,7 @@ import profilesRouter from './profiles-routes.js'
 import categoriesRouter from './categories-routes.js'
 import tagsRouter from './tags-routes.js'
 import statsRouter from './stats-routes.js'
+import authorsRouter from './authors-routes.js'
 
 export {
   signupRouter,
@@ -15,4 +16,5 @@ export {
   categoriesRouter,
   tagsRouter,
   statsRouter,
+  authorsRouter,
 }

@@ -36,6 +36,7 @@ app.use('/api/v1/profiles', routes.profilesRouter)
 app.use('/api/v1/categories', routes.categoriesRouter)
 app.use('/api/v1/tags', routes.tagsRouter)
 app.use('/api/v1/stats', routes.statsRouter)
+app.use('/api/v1/authors', routes.authorsRouter)
 
 /**
  * -------------- ERROR HANDLER MIDDLEWARE ----------------
