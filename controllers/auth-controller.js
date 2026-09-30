@@ -219,8 +219,8 @@ const loginUser = [
         jwt.sign(
           userData,
           process.env.JWT_SECRET,
-          { expiresIn: 60 },
-          // { expiresIn: '1d' },
+          // { expiresIn: 60 },
+          { expiresIn: '1d' },
           (err, token) => {
             // Error generating JWT token
             if (err) {
