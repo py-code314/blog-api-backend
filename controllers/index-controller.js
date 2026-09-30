@@ -52,6 +52,7 @@ import {
   deleteTag,
 } from './tags-controller.js'
 import { getAllStats } from './stats-controller.js'
+import { getAllAuthors } from './authors-controller.js'
 
 export {
   registerUser,
@@ -96,4 +97,5 @@ export {
   updateTag,
   deleteTag,
   getAllStats,
+  getAllAuthors,
 }
