@@ -17,6 +17,7 @@ import {
   updatePost,
   deletePost,
   getPostsByCategoryId,
+  getPostsByTagId,
 } from './posts-controller.js'
 import {
   getNewCommentForm,
@@ -102,4 +103,5 @@ export {
   getAllAuthors,
   getPostsByCategoryId,
   getAllPublicTags,
+  getPostsByTagId,
 }

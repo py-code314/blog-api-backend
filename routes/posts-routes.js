@@ -26,6 +26,8 @@ postsRouter.get('/feed/latest', controllers.getLatestPosts)
 
 // Get all public posts by all authors by category
 postsRouter.get('/categories/:categoryId', controllers.getPostsByCategoryId)
+// Get all public posts by all authors by tag
+postsRouter.get('/tags/:tagId', controllers.getPostsByTagId)
 
 
 // Get a specific post

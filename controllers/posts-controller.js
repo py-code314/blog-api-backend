@@ -379,6 +379,43 @@ async function getPostsByCategoryId(req, res, next) {
   }
 }
 
+/* Get all public posts by category id */
+async function getPostsByTagId(req, res, next) {
+  try {
+    const tagId = Number(req.params.tagId)
+    const isInt = Number.isInteger(tagId)
+
+    // Make sure tagId is a number
+    if (!isInt) {
+      const badRequest = new BadRequestError()
+      return next(badRequest)
+    }
+
+    // Get posts by tag id
+    const posts = await prisma.post.findMany({
+      where: {
+        published: true,
+        tags: {
+          some: {
+            id: tagId,
+          },
+        },
+      },
+      include: { categories: true, comments: true, tags: true },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
+
+    return res.json({
+      success: true,
+      posts,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 /* Get an author post by id */
 async function getAuthorPostById(req, res, next) {
   try {
@@ -617,4 +654,5 @@ export {
   updatePost,
   deletePost,
   getPostsByCategoryId,
+  getPostsByTagId,
 }
