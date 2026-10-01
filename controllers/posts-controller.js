@@ -153,7 +153,7 @@ const createNewPost = [
   },
 ]
 
-// Get all published posts
+// Get all published posts by all authors
 async function getPublicPosts(req, res, next) {
   try {
     const posts = await prisma.post.findMany({
@@ -306,9 +306,9 @@ async function getLatestPosts(req, res, next) {
 async function getPublicPostById(req, res, next) {
   try {
     const postId = Number(req.params.postId)
-    console.log('🚀 ~ getPublicPostById ~ postId:', postId)
+    // console.log('🚀 ~ getPublicPostById ~ postId:', postId)
     const isInt = Number.isInteger(postId)
-    console.log('🚀 ~ getPublicPostById ~ isInt:', isInt)
+    // console.log('🚀 ~ getPublicPostById ~ isInt:', isInt)
 
     // Make sure postId is a number
     if (!isInt) {
@@ -336,6 +336,43 @@ async function getPublicPostById(req, res, next) {
     return res.json({
       success: true,
       post,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+/* Get all public posts by category id */
+async function getPostsByCategoryId(req, res, next) {
+  try {
+    const categoryId = Number(req.params.categoryId)
+    const isInt = Number.isInteger(categoryId)
+
+    // Make sure categoryId is a number
+    if (!isInt) {
+      const badRequest = new BadRequestError()
+      return next(badRequest)
+    }
+
+    // Get posts by category id
+    const posts = await prisma.post.findMany({
+      where: {
+        published: true,
+        categories: {
+          some: {
+            id: categoryId,
+          },
+        },
+      },
+      include: { categories: true, comments: true, tags: true },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
+
+    return res.json({
+      success: true,
+      posts,
     })
   } catch (err) {
     return next(err)
@@ -579,4 +616,5 @@ export {
   getEditPostForm,
   updatePost,
   deletePost,
+  getPostsByCategoryId,
 }

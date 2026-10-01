@@ -16,12 +16,16 @@ postsRouter.get('/me', isAuth, controllers.getAuthorPosts)
 postsRouter.get('/me/published', isAuth, controllers.getAuthorPublishedPosts)
 // Get all author unpublished posts
 postsRouter.get('/me/drafts', isAuth, controllers.getAuthorDrafts)
-// Get all public posts
+
+// Get all public posts by all authors
 postsRouter.get('/', controllers.getPublicPosts)
-// Get 2 most recent posts
+// Get 2 most recent posts by author
 postsRouter.get('/recent', isAuth, controllers.getRecentPosts)
-// Get 3 most recent posts
-postsRouter.get('/feed/latest',  controllers.getLatestPosts)
+// Get 3 most recent published posts by all authors
+postsRouter.get('/feed/latest', controllers.getLatestPosts)
+
+// Get all public posts by all authors by category
+postsRouter.get('/categories/:categoryId', controllers.getPostsByCategoryId)
 
 
 // Get a specific post
