@@ -126,6 +126,25 @@ async function getAllTags(req, res, next) {
   }
 }
 
+/* Get all public tags  */
+async function getAllPublicTags(req, res, next) {
+  try {
+    // Get tags
+    const tags = await prisma.tag.findMany({
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
+
+    return res.json({
+      success: true,
+      tags,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 /* Get tag by id */
 async function getTagById(req, res, next) {
   try {
@@ -332,4 +351,5 @@ export {
   getEditTagForm,
   updateTag,
   deleteTag,
+  getAllPublicTags,
 }

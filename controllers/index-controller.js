@@ -51,6 +51,7 @@ import {
   getEditTagForm,
   updateTag,
   deleteTag,
+  getAllPublicTags,
 } from './tags-controller.js'
 import { getAllStats } from './stats-controller.js'
 import { getAllAuthors } from './authors-controller.js'
@@ -100,4 +101,5 @@ export {
   getAllStats,
   getAllAuthors,
   getPostsByCategoryId,
+  getAllPublicTags,
 }
