@@ -17,13 +17,21 @@ postsRouter.get('/me/published', isAuth, controllers.getAuthorPublishedPosts)
 // Get all author unpublished posts
 postsRouter.get('/me/drafts', isAuth, controllers.getAuthorDrafts)
 
+/* For reader frontend */
 // Get all public posts by all authors
 postsRouter.get('/', controllers.getPublicPosts)
+
+/* For author frontend */
 // Get 2 most recent posts by author
 postsRouter.get('/recent', isAuth, controllers.getRecentPosts)
+
+/* For reader frontend */
 // Get 3 most recent published posts by all authors
 postsRouter.get('/feed/latest', controllers.getLatestPosts)
 
+/* These routes are for reader frontend */
+// Get all public posts by all authors by author id
+postsRouter.get('/authors/:authorId', controllers.getPostsByAuthorId)
 // Get all public posts by all authors by category
 postsRouter.get('/categories/:categoryId', controllers.getPostsByCategoryId)
 // Get all public posts by all authors by tag

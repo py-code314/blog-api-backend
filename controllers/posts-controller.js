@@ -199,6 +199,7 @@ async function getAuthorPosts(req, res, next) {
   }
 }
 
+/* This is for author frontend */
 // Get all author published posts
 async function getAuthorPublishedPosts(req, res, next) {
   try {
@@ -207,6 +208,40 @@ async function getAuthorPublishedPosts(req, res, next) {
     const posts = await prisma.post.findMany({
       where: {
         authorId: userId,
+        published: true,
+      },
+      include: { categories: true, comments: true, tags: true },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
+
+    return res.json({
+      success: true,
+      posts,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+/* This is for reader frontend */
+// Get each author's published posts by author id
+async function getPostsByAuthorId(req, res, next) {
+  try {
+    const authorId = Number(req.params.authorId)
+    const isInt = Number.isInteger(authorId)
+
+    // Make sure authorId is a number
+    if (!isInt) {
+      const badRequest = new BadRequestError()
+      return next(badRequest)
+    }
+
+    // Get posts by author id
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId,
         published: true,
       },
       include: { categories: true, comments: true, tags: true },
@@ -655,4 +690,5 @@ export {
   deletePost,
   getPostsByCategoryId,
   getPostsByTagId,
+  getPostsByAuthorId,
 }
