@@ -341,9 +341,7 @@ async function getLatestPosts(req, res, next) {
 async function getPublicPostById(req, res, next) {
   try {
     const postId = Number(req.params.postId)
-    // console.log('🚀 ~ getPublicPostById ~ postId:', postId)
     const isInt = Number.isInteger(postId)
-    // console.log('🚀 ~ getPublicPostById ~ isInt:', isInt)
 
     // Make sure postId is a number
     if (!isInt) {
@@ -357,7 +355,7 @@ async function getPublicPostById(req, res, next) {
         id: postId,
         published: true,
       },
-      include: { categories: true, comments: true, tags: true },
+      include: { author: true, categories: true, comments: true, tags: true },
     })
 
     // Throw error if post is not found
