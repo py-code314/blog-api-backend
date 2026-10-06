@@ -355,7 +355,12 @@ async function getPublicPostById(req, res, next) {
         id: postId,
         published: true,
       },
-      include: { author: true, categories: true, comments: true, tags: true },
+      include: {
+        author: true,
+        categories: { orderBy: { createdAt: 'desc' } },
+        comments: { orderBy: { createdAt: 'desc' } },
+        tags: { orderBy: { createdAt: 'desc' } },
+      },
     })
 
     // Throw error if post is not found
