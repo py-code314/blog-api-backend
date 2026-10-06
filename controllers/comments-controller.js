@@ -27,9 +27,11 @@ const createNewComment = [
   async (req, res, next) => {
     // Get form data
     const { content } = req.body
+    // console.log("🚀 ~ content:", content)
 
     // Validate request
     const errors = validationResult(req)
+    // console.log("🚀 ~ errors:", errors)
 
     // Show errors if validation fails
     if (!errors.isEmpty()) {

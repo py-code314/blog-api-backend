@@ -11,11 +11,11 @@ import errorHandler from './middleware/error-handler.js'
 
 const app = express()
 
+// TODO: Change cors set up later in production environment
+app.use(cors()) // Allow CORS
 // Express middleware
 app.use(express.json()) // To read JSON data from client
 app.use(express.urlencoded({ extended: true })) // To parse URL encoded form data
-// TODO: Change cors set up later in production environment
-app.use(cors()) // Allow CORS
 
 /**
  * -------------- PASSPORT AUTHENTICATION ----------------
@@ -37,6 +37,7 @@ app.use('/api/v1/categories', routes.categoriesRouter)
 app.use('/api/v1/tags', routes.tagsRouter)
 app.use('/api/v1/stats', routes.statsRouter)
 app.use('/api/v1/authors', routes.authorsRouter)
+// app.use('/api/v1/comments', routes.commentsRouter)
 
 /**
  * -------------- ERROR HANDLER MIDDLEWARE ----------------
