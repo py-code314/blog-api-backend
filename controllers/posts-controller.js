@@ -358,7 +358,7 @@ async function getPublicPostById(req, res, next) {
       include: {
         author: true,
         categories: { orderBy: { createdAt: 'desc' } },
-        comments: { orderBy: { createdAt: 'desc' } },
+        comments: { include: { author: true }, orderBy: { createdAt: 'desc' } },
         tags: { orderBy: { createdAt: 'desc' } },
       },
     })
