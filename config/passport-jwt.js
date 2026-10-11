@@ -1,7 +1,10 @@
+/* -------------------- Dotenv -------------------- */
 import 'dotenv/config'
+/* -------------------- Passport -------------------- */
 import passport from 'passport'
 import { Strategy as JwtStrategy } from 'passport-jwt'
 import { ExtractJwt } from 'passport-jwt'
+/* -------------------- Prisma -------------------- */
 import { prisma } from '../lib/prisma.js'
 
 // Options
@@ -20,7 +23,7 @@ const verifyCallback = async (jwt_payload, done) => {
     if (user) return done(null, user)
     else return done(null, false)
   } catch (err) {
-    // console.error(err)
+    console.error(err)
     return done(err)
   }
 }

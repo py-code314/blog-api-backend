@@ -1,13 +1,15 @@
+/* -------------------- Bcrypt -------------------- */
+import bcrypt from 'bcryptjs'
+/* -------------------- Passport -------------------- */
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
-import bcrypt from 'bcryptjs'
+/* -------------------- Prisma -------------------- */
 import { prisma } from '../lib/prisma.js'
 
 /* Verify email and password before logging in */
 const verifyCallback = async (email, password, done) => {
   try {
     const user = await prisma.user.findUnique({ where: { email } })
-    // console.log("🚀 ~ verifyCallback ~ user:", user)
 
     // User doesn't exist
     if (!user) {
