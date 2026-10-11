@@ -14,7 +14,8 @@ commentsRouter.post('/new', controllers.createNewComment)
 
 // Update a specific comment
 commentsRouter.get('/:commentId/update', controllers.getEditCommentForm)
-commentsRouter.put('/:commentId/update', controllers.updateComment)
+// commentsRouter.put('/:commentId/update', controllers.updateComment)
+commentsRouter.post('/:commentId/update', controllers.updateComment)
 
 // Delete a comment
 commentsRouter.delete('/:commentId/delete', controllers.deleteComment)
