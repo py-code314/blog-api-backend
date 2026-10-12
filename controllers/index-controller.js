@@ -3,7 +3,6 @@ import {
   loginUser,
 } from './auth-controller.js'
 import {
-  getNewPostForm,
   createNewPost,
   getPublicPosts,
   getAuthorPosts,
@@ -13,7 +12,6 @@ import {
   getLatestPosts,
   getPublicPostById,
   getAuthorPostById,
-  getEditPostForm,
   updatePost,
   deletePost,
   getPostsByCategoryId,
@@ -57,7 +55,6 @@ import { getAllAuthors } from './authors-controller.js'
 export {
   registerUser,
   loginUser,
-  getNewPostForm,
   createNewPost,
   getPublicPosts,
   getAuthorPosts,
@@ -67,7 +64,6 @@ export {
   getLatestPosts,
   getPublicPostById,
   getAuthorPostById,
-  getEditPostForm,
   updatePost,
   deletePost,
   createNewComment,

@@ -1,5 +1,12 @@
-import { body, validationResult, matchedData } from 'express-validator'
+/* -------------------- Express -------------------- */
+import {
+  body,
+  validationResult,
+  matchedData,
+} from 'express-validator'
+/* -------------------- Prisma -------------------- */
 import { prisma } from '../lib/prisma.js'
+/* -------------------- Errors -------------------- */
 import RecordNotFoundError from '../errors/resource-error.js'
 import AuthorizationError from '../errors/authorization-error.js'
 import BadRequestError from '../errors/request-error.js'
@@ -198,8 +205,4 @@ async function deleteComment(req, res, next) {
   }
 }
 
-export {
-  createNewComment,
-  updateComment,
-  deleteComment,
-}
+export { createNewComment, updateComment, deleteComment }

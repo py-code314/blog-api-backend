@@ -3,23 +3,22 @@ import * as controllers from '../controllers/index-controller.js'
 import { isAuth } from '../middleware/auth.js'
 
 const postsRouter = Router()
-// All Post routes are protected routes
-// postsRouter.use(isAuth)
 
+/* For author frontend */
 // Add new post
-postsRouter.get('/new', isAuth, controllers.getNewPostForm)
 postsRouter.post('/new', isAuth, controllers.createNewPost)
-
-// Get all author posts
-postsRouter.get('/me', isAuth, controllers.getAuthorPosts)
-// Get all author published posts
-postsRouter.get('/me/published', isAuth, controllers.getAuthorPublishedPosts)
-// Get all author unpublished posts
-postsRouter.get('/me/drafts', isAuth, controllers.getAuthorDrafts)
 
 /* For reader frontend */
 // Get all public posts by all authors
 postsRouter.get('/', controllers.getPublicPosts)
+
+/* For author frontend */
+// Get all single author's posts
+postsRouter.get('/me', isAuth, controllers.getAuthorPosts)
+// Get all single author's published posts
+postsRouter.get('/me/published', isAuth, controllers.getAuthorPublishedPosts)
+// Get all single author's unpublished posts
+postsRouter.get('/me/drafts', isAuth, controllers.getAuthorDrafts)
 
 /* For author frontend */
 // Get 2 most recent posts by author
@@ -27,26 +26,27 @@ postsRouter.get('/recent', isAuth, controllers.getRecentPosts)
 
 /* For reader frontend */
 // Get 3 most recent published posts by all authors
-postsRouter.get('/feed/latest', controllers.getLatestPosts)
+postsRouter.get('/latest', controllers.getLatestPosts)
 
 /* These routes are for reader frontend */
-// Get all public posts by all authors by author id
+// Get all public posts by author id
 postsRouter.get('/authors/:authorId', controllers.getPostsByAuthorId)
-// Get all public posts by all authors by category
+// Get all public posts by any author by category
 postsRouter.get('/categories/:categoryId', controllers.getPostsByCategoryId)
-// Get all public posts by all authors by tag
+// Get all public posts by any author by tag
 postsRouter.get('/tags/:tagId', controllers.getPostsByTagId)
 
-
-// Get a specific post
+/* Get a specific post */
+// For author frontend 
 postsRouter.get('/me/:postId', isAuth, controllers.getAuthorPostById)
+// For reader frontend 
 postsRouter.get('/:postId', controllers.getPublicPostById)
 
+/* For author frontend */
 // Update a specific post
-postsRouter.get('/:postId/update', isAuth, controllers.getEditPostForm)
 postsRouter.post('/:postId/update', isAuth, controllers.updatePost)
-// postsRouter.put('/:postId/update', isAuth, controllers.updatePost)
 
+/* For author frontend */
 // Delete a post
 postsRouter.delete('/:postId/delete', isAuth, controllers.deletePost)
 

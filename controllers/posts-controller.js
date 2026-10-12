@@ -1,8 +1,12 @@
+/* -------------------- Express -------------------- */
 import { body, validationResult, matchedData } from 'express-validator'
+/* -------------------- Prisma -------------------- */
 import { prisma } from '../lib/prisma.js'
+/* -------------------- Errors -------------------- */
 import RecordNotFoundError from '../errors/resource-error.js'
 import BadRequestError from '../errors/request-error.js'
 import AuthorizationError from '../errors/authorization-error.js'
+/* -------------------- Functions -------------------- */
 import verifyCategoryIds from '../utils/categories.js'
 import verifyTagIds from '../utils/tags.js'
 
@@ -70,15 +74,6 @@ const validatePost = [
     return true
   }),
 ]
-
-/* Show blog post form */
-async function getNewPostForm(req, res) {
-  res.json({
-    success: true,
-    title: 'New Post',
-    msg: 'Get new blog post form',
-  })
-}
 
 /* Validate and create new blog post */
 const createNewPost = [
@@ -175,7 +170,7 @@ async function getPublicPosts(req, res, next) {
   }
 }
 
-// Get all author posts both published & unpublished
+// Get a single author's posts both published & unpublished
 async function getAuthorPosts(req, res, next) {
   try {
     const userId = req.user?.id
@@ -199,8 +194,7 @@ async function getAuthorPosts(req, res, next) {
   }
 }
 
-/* This is for author frontend */
-// Get all author published posts
+// Get a single author's all published posts
 async function getAuthorPublishedPosts(req, res, next) {
   try {
     const userId = req.user?.id
@@ -225,7 +219,83 @@ async function getAuthorPublishedPosts(req, res, next) {
   }
 }
 
-/* This is for reader frontend */
+// Get a single author's all unpublished posts
+async function getAuthorDrafts(req, res, next) {
+  try {
+    const userId = req.user?.id
+
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId: userId,
+        published: false,
+      },
+      include: { categories: true, comments: true, tags: true },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
+
+    return res.json({
+      success: true,
+      posts,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+// Get 2 most recent posts by author both published and unpublished
+async function getRecentPosts(req, res, next) {
+  try {
+    const userId = req.user.id
+
+    /* Convert userId to number to prevent the query running when it's value is undefined. When userId is undefined query still runs and gets all posts without any filtering applied. It throws error instead of silently returning all posts when it is converted to a number */
+    const posts = await prisma.post.findMany({
+      // Filter posts by authorId using where clause
+      where: {
+        authorId: Number(userId),
+      },
+      include: { categories: true, comments: true, tags: true },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      take: 2,
+    })
+
+    return res.json({
+      success: true,
+      posts,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+// Get 3 most recent published posts by all authors
+async function getLatestPosts(req, res, next) {
+  try {
+    const posts = await prisma.post.findMany({
+      // Filter posts by published true
+      where: {
+        published: true,
+      },
+      include: { categories: true, comments: true, tags: true },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      take: 3,
+    })
+
+    return res.json({
+      success: true,
+      posts,
+    })
+  } catch (err) {
+    console.error(err)
+    return next(err)
+  }
+}
+
 // Get each author's published posts by author id
 async function getPostsByAuthorId(req, res, next) {
   try {
@@ -253,127 +323,6 @@ async function getPostsByAuthorId(req, res, next) {
     return res.json({
       success: true,
       posts,
-    })
-  } catch (err) {
-    return next(err)
-  }
-}
-
-// Get all author unpublished posts
-async function getAuthorDrafts(req, res, next) {
-  try {
-    const userId = req.user?.id
-
-    const posts = await prisma.post.findMany({
-      where: {
-        authorId: userId,
-        published: false,
-      },
-      include: { categories: true, comments: true, tags: true },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-    })
-
-    return res.json({
-      success: true,
-      posts,
-    })
-  } catch (err) {
-    return next(err)
-  }
-}
-
-// TODO: Add condition 'published: true' to where clause to make only published posts are retrieved
-// Get 2 most recent posts by author
-async function getRecentPosts(req, res, next) {
-  try {
-    const userId = req.user.id
-
-    /* Convert userId to number to prevent the query running when it's value is undefined. When userId is undefined query still runs and gets all posts without any filtering applied. It throws error instead of silently returning all posts when it is converted to a number */
-    const posts = await prisma.post.findMany({
-      // Filter posts by authorId using where clause
-      where: {
-        authorId: Number(userId),
-      },
-      include: { categories: true, comments: true, tags: true },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-      take: 2,
-    })
-
-    return res.json({
-      success: true,
-      posts,
-    })
-  } catch (err) {
-    return next(err)
-  }
-}
-
-// Get 3 most recent posts by all authors
-async function getLatestPosts(req, res, next) {
-  try {
-    const posts = await prisma.post.findMany({
-      // Filter posts by published true
-      where: {
-        published: true,
-      },
-      include: { categories: true, comments: true, tags: true },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-      take: 3,
-    })
-
-    return res.json({
-      success: true,
-      posts,
-    })
-  } catch (err) {
-    console.error(err)
-    return next(err)
-  }
-}
-
-/* Get a public post by id */
-async function getPublicPostById(req, res, next) {
-  try {
-    const postId = Number(req.params.postId)
-    const isInt = Number.isInteger(postId)
-
-    // Make sure postId is a number
-    if (!isInt) {
-      const badRequest = new BadRequestError()
-      return next(badRequest)
-    }
-
-    // Get post by id
-    const post = await prisma.post.findUnique({
-      where: {
-        id: postId,
-        published: true,
-      },
-      include: {
-        author: true,
-        categories: { orderBy: { createdAt: 'desc' } },
-        comments: { include: { author: true }, orderBy: { createdAt: 'desc' } },
-        tags: { orderBy: { createdAt: 'desc' } },
-      },
-    })
-
-    // Throw error if post is not found
-    if (!post) {
-      const invalidPost = new RecordNotFoundError(
-        'The post you are looking for no longer exists.'
-      )
-      return next(invalidPost)
-    }
-
-    return res.json({
-      success: true,
-      post,
     })
   } catch (err) {
     return next(err)
@@ -417,7 +366,7 @@ async function getPostsByCategoryId(req, res, next) {
   }
 }
 
-/* Get all public posts by category id */
+/* Get all public posts by tag id */
 async function getPostsByTagId(req, res, next) {
   try {
     const tagId = Number(req.params.tagId)
@@ -454,7 +403,7 @@ async function getPostsByTagId(req, res, next) {
   }
 }
 
-/* Get an author post by id */
+/* Get an author post by id published or unpublished */
 async function getAuthorPostById(req, res, next) {
   try {
     const postId = Number(req.params.postId)
@@ -493,10 +442,9 @@ async function getAuthorPostById(req, res, next) {
   }
 }
 
-/* Show blog post form for editing */
-async function getEditPostForm(req, res, next) {
+/* Get a public post by id by any author */
+async function getPublicPostById(req, res, next) {
   try {
-    const userId = req.user.id
     const postId = Number(req.params.postId)
     const isInt = Number.isInteger(postId)
 
@@ -510,29 +458,26 @@ async function getEditPostForm(req, res, next) {
     const post = await prisma.post.findUnique({
       where: {
         id: postId,
+        published: true,
       },
-      include: { categories: true, tags: true },
+      include: {
+        author: true,
+        categories: { orderBy: { createdAt: 'desc' } },
+        comments: { include: { author: true }, orderBy: { createdAt: 'desc' } },
+        tags: { orderBy: { createdAt: 'desc' } },
+      },
     })
 
-    // Post is not found
+    // Throw error if post is not found
     if (!post) {
       const invalidPost = new RecordNotFoundError(
-        'The post you want to edit no longer exists.'
+        'The post you are looking for no longer exists.'
       )
       return next(invalidPost)
     }
 
-    // User isn't the author
-    if (post.authorId !== userId) {
-      const invalidUser = new AuthorizationError(
-        'You do not have permission to edit this post.'
-      )
-      return next(invalidUser)
-    }
-
-    res.json({
+    return res.json({
       success: true,
-      title: 'Edit Post',
       post,
     })
   } catch (err) {
@@ -610,7 +555,6 @@ const updatePost = [
 
       res.json({
         success: true,
-        title: 'Updated Post',
         post,
       })
     } catch (err) {
@@ -678,7 +622,6 @@ async function deletePost(req, res, next) {
 }
 
 export {
-  getNewPostForm,
   createNewPost,
   getPublicPosts,
   getAuthorPosts,
@@ -688,7 +631,6 @@ export {
   getLatestPosts,
   getPublicPostById,
   getAuthorPostById,
-  getEditPostForm,
   updatePost,
   deletePost,
   getPostsByCategoryId,
