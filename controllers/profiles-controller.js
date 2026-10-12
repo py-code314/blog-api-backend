@@ -1,8 +1,12 @@
+/* -------------------- Express -------------------- */
 import { body, validationResult, matchedData } from 'express-validator'
+/* -------------------- Prisma -------------------- */
 import { prisma } from '../lib/prisma.js'
+/* -------------------- Errors -------------------- */
 import BadRequestError from '../errors/request-error.js'
 import RecordNotFoundError from '../errors/resource-error.js'
 import AuthorizationError from '../errors/authorization-error.js'
+/* -------------------- Functions -------------------- */
 import verifyToken from '../utils/verify-token.js'
 
 /* Error messages */
@@ -17,16 +21,7 @@ const validateProfile = [
     .withMessage(`Profile content ${emptyErr}`),
 ]
 
-/* Show profile form */
-async function getNewProfileForm(req, res) {
-  res.json({
-    success: true,
-    title: 'New Profile',
-    msg: 'Get new profile form',
-  })
-}
-
-/* Validate and create new profile */
+/* Validate and create new profile (adding only 'bio' field for now) */
 const createNewProfile = [
   validateProfile,
 
@@ -69,6 +64,52 @@ const createNewProfile = [
   },
 ]
 
+/* Get self profile (bio) */
+async function getMyProfile(req, res, next) {
+  try {
+    // Get user id
+    const userId = req.user.id
+
+    // Get profile with user id
+    const profile = await prisma.profile.findUnique({
+      where: {
+        userId: userId,
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+            posts: true,
+          },
+        },
+      },
+    })
+
+    // Throw error if profile is not found
+    if (!profile) {
+      const invalidProfile = new RecordNotFoundError(
+        'The profile you are looking for no longer exists.'
+      )
+      return next(invalidProfile)
+    }
+
+    res.json({
+      success: true,
+      profile,
+    })
+  } catch (err) {
+    console.error(err)
+    return next(err)
+  }
+}
+
+/**
+ * --------------  Below functions are not implemented yet  ----------------
+ */
+
+/* Need to update this function if using later. This is intended for
+reader frontend */
 /* Get a profile by id */
 async function getProfileById(req, res, next) {
   try {
@@ -116,95 +157,6 @@ async function getProfileById(req, res, next) {
 
     res.json({
       success: true,
-      profile,
-    })
-  } catch (err) {
-    return next(err)
-  }
-}
-
-/* Get self profile */
-async function getMyProfile(req, res, next) {
-  try {
-    // Get user id
-    const userId = req.user.id
-
-    // Get profile with user id
-    const profile = await prisma.profile.findUnique({
-      where: {
-        userId: userId,
-      },
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true,
-            posts: true,
-          },
-        },
-      },
-    })
-
-    // Throw error if profile is not found
-    if (!profile) {
-      const invalidProfile = new RecordNotFoundError(
-        'The profile you are looking for no longer exists.'
-      )
-      return next(invalidProfile)
-    }
-
-    res.json({
-      success: true,
-      profile,
-    })
-  } catch (err) {
-    console.error(err)
-    return next(err)
-  }
-}
-
-/* Show profile form for editing */
-async function getEditProfileForm(req, res, next) {
-  try {
-    const userId = req.user.id
-    /* Use Number instead of parseInt because parseInt
-    allows invalid ids like '1hello',it just ignores the text 
-    in the id variable */
-    const profileId = Number(req.params.profileId)
-    const isInt = Number.isInteger(profileId)
-
-    // Make sure profileId is a number
-    if (!isInt) {
-      const badRequest = new BadRequestError()
-      return next(badRequest)
-    }
-
-    // Get profile by id
-    const profile = await prisma.profile.findUnique({
-      where: {
-        id: profileId,
-      },
-    })
-
-    // Profile is not found
-    if (!profile) {
-      const invalidProfile = new RecordNotFoundError(
-        'The profile you want to edit no longer exists.'
-      )
-      return next(invalidProfile)
-    }
-
-    // Only owner can edit profile
-    if (profile.userId !== userId) {
-      const invalidUser = new AuthorizationError(
-        'You do not have permission to edit this profile.'
-      )
-      return next(invalidUser)
-    }
-
-    res.json({
-      success: true,
-      title: 'Edit Profile',
       profile,
     })
   } catch (err) {
@@ -326,11 +278,9 @@ async function deleteProfile(req, res, next) {
 }
 
 export {
-  getNewProfileForm,
   createNewProfile,
   getProfileById,
   getMyProfile,
-  getEditProfileForm,
   updateProfile,
   deleteProfile,
 }

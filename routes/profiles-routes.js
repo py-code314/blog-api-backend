@@ -3,24 +3,24 @@ import * as controllers from '../controllers/index-controller.js'
 import { isAuth } from '../middleware/auth.js'
 
 const profilesRouter = Router()
-// All Profile routes are protected routes
-// profilesRouter.use(isAuth)
 
+/* Routes to manage 'bio' field in Profile */
+/* Using in only author frontend for now */
 // Add new profile
-// ? Do I need get route to show an empty form. Isn't it already in frontend
-profilesRouter.get('/new', isAuth, controllers.getNewProfileForm)
 profilesRouter.post('/new', isAuth, controllers.createNewProfile)
 
+/* For author frontend */
 // Get self profile
 profilesRouter.get('/me', isAuth, controllers.getMyProfile)
-// Show a specific profile
+
+/**
+ * --------------  Not using these endpoint yet ----------------
+ */
+
+// Show a specific profile by profile id
 profilesRouter.get('/:profileId', controllers.getProfileById)
-
-
 // Update a specific profile
-profilesRouter.get('/:profileId/update', isAuth, controllers.getEditProfileForm)
 profilesRouter.put('/:profileId/update', isAuth, controllers.updateProfile)
-
 // Delete a profile
 profilesRouter.delete('/:profileId/delete', isAuth, controllers.deleteProfile)
 

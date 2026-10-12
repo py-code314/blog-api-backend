@@ -24,11 +24,9 @@ import {
   deleteComment,
 } from './comments-controller.js'
 import {
-  getNewProfileForm,
   createNewProfile,
   getMyProfile,
   getProfileById,
-  getEditProfileForm,
   updateProfile,
   deleteProfile,
 } from './profiles-controller.js'
@@ -69,11 +67,9 @@ export {
   createNewComment,
   updateComment,
   deleteComment,
-  getNewProfileForm,
   createNewProfile,
   getProfileById,
   getMyProfile,
-  getEditProfileForm,
   updateProfile,
   deleteProfile,
   createNewCategory,

@@ -4,18 +4,19 @@ import { isAuth } from '../middleware/auth.js'
 
 const categoriesRouter = Router()
 
+/* For author frontend */
 // Add new category
 categoriesRouter.post('/new', isAuth, controllers.createNewCategory)
 
+/* For both author and reader front ends */
 // Show all categories
 categoriesRouter.get('/all', controllers.getAllCategories)
 
+/* For author frontend */
 // Get a category
 categoriesRouter.get('/:categoryId', isAuth, controllers.getCategoryById)
-
 // Update a category
 categoriesRouter.post('/:categoryId/update', isAuth, controllers.updateCategory)
-
 // Delete a category
 categoriesRouter.delete(
   '/:categoryId/delete',
