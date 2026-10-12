@@ -1,5 +1,8 @@
+/* -------------------- Express -------------------- */
 import { body, validationResult, matchedData } from 'express-validator'
+/* -------------------- Prisma -------------------- */
 import { prisma } from '../lib/prisma.js'
+/* -------------------- Errors -------------------- */
 import AuthorizationError from '../errors/authorization-error.js'
 import BadRequestError from '../errors/request-error.js'
 import RecordNotFoundError from '../errors/resource-error.js'
@@ -26,15 +29,6 @@ const validateTag = [
     .toLowerCase()
     .customSanitizer((value) => value.replace(/\s+/g, '-')),
 ]
-
-/* Show new tag form */
-async function getNewTagForm(req, res) {
-  res.json({
-    success: true,
-    title: 'New Tag',
-    msg: 'Get new tag form',
-  })
-}
 
 /* Validate and create new tag */
 const createNewTag = [
@@ -88,8 +82,8 @@ const createNewTag = [
   },
 ]
 
-/* Get all tags by user id */
-async function getAllTags(req, res, next) {
+/* Get all tags by user id (specific to an author) */
+async function getTagsByAuthor(req, res, next) {
   try {
     const userId = req.user.id
 
@@ -126,8 +120,8 @@ async function getAllTags(req, res, next) {
   }
 }
 
-/* Get all public tags  */
-async function getAllPublicTags(req, res, next) {
+/* Get all tags by all authors  */
+async function getAllTags(req, res, next) {
   try {
     // Get tags
     const tags = await prisma.tag.findMany({
@@ -183,52 +177,6 @@ async function getTagById(req, res, next) {
   }
 }
 
-/* Get tag data for editing */
-async function getEditTagForm(req, res, next) {
-  try {
-    const userId = req.user.id
-    const tagId = Number(req.params.tagId)
-    const isInt = Number.isInteger(tagId)
-
-    // Make sure tagId is a number
-    if (!isInt) {
-      const badRequest = new BadRequestError()
-      return next(badRequest)
-    }
-
-    // Get tag by id
-    const tag = await prisma.tag.findUnique({
-      where: {
-        id: tagId,
-      },
-    })
-
-    // Tag is not found
-    if (!tag) {
-      const invalidTag = new RecordNotFoundError(
-        'The tag you want to edit no longer exists.'
-      )
-      return next(invalidTag)
-    }
-
-    // User not created the tag
-    if (tag.userId !== userId) {
-      const invalidUser = new AuthorizationError(
-        'You do not have permission to edit this tag.'
-      )
-      return next(invalidUser)
-    }
-
-    res.json({
-      success: true,
-      title: 'Edit Tag',
-      tag,
-    })
-  } catch (err) {
-    return next(err)
-  }
-}
-
 /* Validate and update a tag */
 const updateTag = [
   validateTag,
@@ -244,7 +192,6 @@ const updateTag = [
     if (!errors.isEmpty()) {
       return res.status(400).json({
         success: false,
-        title: 'Edit Tag',
         tag: { name },
         errors: errors.array(),
       })
@@ -276,7 +223,6 @@ const updateTag = [
 
       res.json({
         success: true,
-        title: 'Updated Tag',
         tag,
       })
     } catch (err) {
@@ -344,12 +290,10 @@ async function deleteTag(req, res, next) {
 }
 
 export {
-  getNewTagForm,
   createNewTag,
-  getAllTags,
+  getTagsByAuthor,
   getTagById,
-  getEditTagForm,
   updateTag,
   deleteTag,
-  getAllPublicTags,
+  getAllTags,
 }

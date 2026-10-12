@@ -3,26 +3,25 @@ import * as controllers from '../controllers/index-controller.js'
 import { isAuth } from '../middleware/auth.js'
 
 const tagsRouter = Router()
-// tagsRouter.use(isAuth)
 
+/* For author frontend */
 // Add new tag
-tagsRouter.get('/new',isAuth, controllers.getNewTagForm)
-tagsRouter.post('/new',isAuth, controllers.createNewTag)
+tagsRouter.post('/new', isAuth, controllers.createNewTag)
 
-// Show all tags by author
-tagsRouter.get('/all',isAuth, controllers.getAllTags)
-// Show all public tags
-tagsRouter.get('/public', controllers.getAllPublicTags)
+/* For author frontend */
+// Show all tags by a specific author
+tagsRouter.get('/me', isAuth, controllers.getTagsByAuthor)
 
-// Get a tag
+/* For reader frontend */
+// Show all tags by all authors
+tagsRouter.get('/all', controllers.getAllTags)
+
+/* For author frontend */
+// Get a tag by id
 tagsRouter.get('/:tagId', isAuth, controllers.getTagById)
-
 // Update a tag
-tagsRouter.get('/:tagId/update', isAuth, controllers.getEditTagForm)
-tagsRouter.post('/:tagId/update',isAuth, controllers.updateTag)
-// tagsRouter.put('/:tagId/update', controllers.updateTag)
-
+tagsRouter.post('/:tagId/update', isAuth, controllers.updateTag)
 // Delete a tag
-tagsRouter.delete('/:tagId/delete',isAuth, controllers.deleteTag)
+tagsRouter.delete('/:tagId/delete', isAuth, controllers.deleteTag)
 
 export default tagsRouter

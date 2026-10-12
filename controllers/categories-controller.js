@@ -91,6 +91,7 @@ const createNewCategory = [
 ]
 
 /* Get all categories */
+/* Filters categories by user id */
 async function getAllCategories(req, res, next) {
   try {
     // Get user id

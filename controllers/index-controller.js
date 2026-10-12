@@ -38,14 +38,12 @@ import {
   deleteCategory,
 } from './categories-controller.js'
 import {
-  getNewTagForm,
   createNewTag,
-  getAllTags,
+  getTagsByAuthor,
   getTagById,
-  getEditTagForm,
   updateTag,
   deleteTag,
-  getAllPublicTags,
+  getAllTags,
 } from './tags-controller.js'
 import { getAllStats } from './stats-controller.js'
 import { getAllAuthors } from './authors-controller.js'
@@ -77,17 +75,15 @@ export {
   getCategoryById,
   updateCategory,
   deleteCategory,
-  getNewTagForm,
   createNewTag,
-  getAllTags,
+  getTagsByAuthor,
   getTagById,
-  getEditTagForm,
   updateTag,
   deleteTag,
   getAllStats,
   getAllAuthors,
   getPostsByCategoryId,
-  getAllPublicTags,
+  getAllTags,
   getPostsByTagId,
   getPostsByAuthorId,
 }
