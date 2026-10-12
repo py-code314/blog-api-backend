@@ -1,4 +1,6 @@
+/* -------------------- Passport -------------------- */
 import passport from 'passport'
+/* -------------------- Errors -------------------- */
 import { AuthenticationError } from '../errors/authentication-error.js'
 
 /* Check for valid user by verifying JWT */

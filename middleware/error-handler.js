@@ -1,6 +1,6 @@
 /* Express error handler middleware */
 const errorHandler = (err, req, res, next) => {
-  // console.error(err)
+  console.error(err)
 
   /* Check if headers have already been sent to avoid "Can't set
    headers after they are sent" errors */
