@@ -1,10 +1,13 @@
+/* -------------------- Import from packages -------------------- */
+import 'dotenv/config'
 import bcrypt from 'bcryptjs'
-import { prisma } from '../lib/prisma.js'
 import { body, validationResult, matchedData } from 'express-validator'
-import DatabaseConnectionError from '../errors/database-error.js'
 import passport from 'passport'
 import jwt from 'jsonwebtoken'
-import 'dotenv/config'
+/* -------------------- Prisma -------------------- */
+import { prisma } from '../lib/prisma.js'
+/* -------------------- Errors -------------------- */
+import DatabaseConnectionError from '../errors/database-error.js'
 
 /* Error messages */
 const emptyErr = 'can not be empty.'
@@ -32,12 +35,13 @@ const validateSignup = [
           email,
         },
       })
-      // console.log("🚀 ~ existingUser:", existingUser)
       if (existingUser) {
         throw new Error(`Email is ${existsErr}`)
       }
 
-      /* Express custom validators must return a truthy value to indicate that the field is valid, or falsy to indicate it's invalid */
+      /* Express custom validators must return a truthy value to
+       indicate that the field is valid, or falsy to indicate it's
+        invalid */
       return true
     }),
   body('name')
@@ -55,8 +59,8 @@ const validateSignup = [
     .isLength({ min: 8 })
     .withMessage(`Password ${lengthErr}`)
     .bail()
-    // Password must contain at least 8 characters with
-    // an uppercase letter, a number, and a special character
+    /* Password must contain at least 8 characters with
+     an uppercase letter, a number, and a special character */
     .matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/)
     .withMessage(`Password ${passwordInvalidErr}`),
   body('confirmPassword')
@@ -134,8 +138,8 @@ const registerUser = [
         const dbError = new DatabaseConnectionError(
           'Failed to connect to the database. Please try again later.'
         )
-        // Pass the error to next() for older Express versions instead
-        // of just throwing the error
+        /* Pass the error to next() for older Express versions instead
+         of just throwing the error */
         return next(dbError)
       }
       return next(err)
@@ -151,7 +155,6 @@ const registerUser = [
 const loginUser = [
   validateLogin,
   async (req, res, next) => {
-    // Get email from form
     const { email } = req.body
 
     // Validate request
@@ -219,7 +222,6 @@ const loginUser = [
         jwt.sign(
           userData,
           process.env.JWT_SECRET,
-          // { expiresIn: 60 },
           { expiresIn: '1d' },
           (err, token) => {
             // Error generating JWT token

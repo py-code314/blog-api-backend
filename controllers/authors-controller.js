@@ -1,6 +1,8 @@
+/* -------------------- Prisma -------------------- */
 import { prisma } from '../lib/prisma.js'
 
 /* Get all authors */
+/* Authors are users who have published at least one post */
 async function getAllAuthors(req, res, next) {
   try {
     /* Filter users by published posts first, then select ids, and

@@ -37,11 +37,9 @@ import {
   deleteProfile,
 } from './profiles-controller.js'
 import {
-  getNewCategoryForm,
   createNewCategory,
   getAllCategories,
   getCategoryById,
-  getEditCategoryForm,
   updateCategory,
   deleteCategory,
 } from './categories-controller.js'
@@ -86,11 +84,9 @@ export {
   getEditProfileForm,
   updateProfile,
   deleteProfile,
-  getNewCategoryForm,
   createNewCategory,
   getAllCategories,
   getCategoryById,
-  getEditCategoryForm,
   updateCategory,
   deleteCategory,
   getNewTagForm,
