@@ -12,14 +12,6 @@ const validateComment = [
   body('content').trim().notEmpty().withMessage(`Comment content ${emptyErr}`),
 ]
 
-/* Show new comment form */
-async function getNewCommentForm(req, res) {
-  res.json({
-    success: true,
-    msg: 'Get new comment form',
-  })
-}
-
 /* Validate and create a new comment */
 const createNewComment = [
   validateComment,
@@ -27,17 +19,14 @@ const createNewComment = [
   async (req, res, next) => {
     // Get form data
     const { content } = req.body
-    // console.log("🚀 ~ content:", content)
 
     // Validate request
     const errors = validationResult(req)
-    // console.log("🚀 ~ errors:", errors)
 
     // Show errors if validation fails
     if (!errors.isEmpty()) {
       return res.status(400).json({
         success: false,
-        title: 'New Comment',
         content,
         errors: errors.array(),
       })
@@ -93,60 +82,6 @@ const createNewComment = [
   },
 ]
 
-/* Show blog post form for editing */
-async function getEditCommentForm(req, res, next) {
-  try {
-    const userId = req.user.id
-    const postId = Number(req.params.postId)
-    const isPostInt = Number.isInteger(postId)
-    const commentId = Number(req.params.commentId)
-    const isCommentInt = Number.isInteger(commentId)
-
-    // Make sure postId and commentId are numbers
-    if (!isPostInt || !isCommentInt) {
-      const badRequest = new BadRequestError()
-      return next(badRequest)
-    }
-
-    // Fetch comment by id
-    const comment = await prisma.comment.findUnique({
-      where: {
-        id: commentId,
-      },
-    })
-
-    // Comment is not found
-    if (!comment) {
-      const invalidComment = new RecordNotFoundError(
-        'The comment you want to edit no longer exists.'
-      )
-      return next(invalidComment)
-    }
-
-    // Comment doesn't belong to the specific post
-    if (comment.postId !== postId) {
-      const badRequest = new BadRequestError()
-      return next(badRequest)
-    }
-
-    // User isn't the author
-    if (comment.authorId !== userId) {
-      const invalidUser = new AuthorizationError(
-        'You do not have permission to edit this comment.'
-      )
-      return next(invalidUser)
-    }
-
-    res.json({
-      success: true,
-      title: 'Edit Comment',
-      comment,
-    })
-  } catch (err) {
-    return next(err)
-  }
-}
-
 /* Validate and update a comment */
 const updateComment = [
   validateComment,
@@ -162,7 +97,6 @@ const updateComment = [
     if (!errors.isEmpty()) {
       return res.status(400).json({
         success: false,
-        title: 'Edit Comment',
         comment: { content },
         errors: errors.array(),
       })
@@ -196,7 +130,6 @@ const updateComment = [
 
       res.json({
         success: true,
-        title: 'Updated Comment',
         comment,
       })
     } catch (err) {
@@ -266,9 +199,7 @@ async function deleteComment(req, res, next) {
 }
 
 export {
-  getNewCommentForm,
   createNewComment,
-  getEditCommentForm,
   updateComment,
   deleteComment,
 }

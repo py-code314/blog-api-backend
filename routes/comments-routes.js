@@ -7,17 +7,12 @@ const commentsRouter = Router({ mergeParams: true })
 commentsRouter.use(isAuth)
 
 // Add new comment
-commentsRouter.get('/new', controllers.getNewCommentForm)
 commentsRouter.post('/new', controllers.createNewComment)
 
-// * Add route to get a specific comment later if needed
-
 // Update a specific comment
-commentsRouter.get('/:commentId/update', controllers.getEditCommentForm)
-// commentsRouter.put('/:commentId/update', controllers.updateComment)
 commentsRouter.post('/:commentId/update', controllers.updateComment)
 
-// Delete a comment
+// Delete a comment by id
 commentsRouter.delete('/:commentId/delete', controllers.deleteComment)
 
 export default commentsRouter 

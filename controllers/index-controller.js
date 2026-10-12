@@ -21,9 +21,7 @@ import {
   getPostsByAuthorId,
 } from './posts-controller.js'
 import {
-  getNewCommentForm,
   createNewComment,
-  getEditCommentForm,
   updateComment,
   deleteComment,
 } from './comments-controller.js'
@@ -72,9 +70,7 @@ export {
   getEditPostForm,
   updatePost,
   deletePost,
-  getNewCommentForm,
   createNewComment,
-  getEditCommentForm,
   updateComment,
   deleteComment,
   getNewProfileForm,
