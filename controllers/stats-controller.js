@@ -1,6 +1,7 @@
+/* -------------------- Prisma -------------------- */
 import { prisma } from '../lib/prisma.js'
 
-// Get all author unpublished posts
+/* Get stats for published, unpublished posts, categories, and tags */
 async function getAllStats(req, res, next) {
   try {
     const userId = req.user?.id
