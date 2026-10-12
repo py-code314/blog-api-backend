@@ -1,5 +1,7 @@
+/* -------------------- JWT -------------------- */
 import jwt from 'jsonwebtoken'
 
+/* Verify for a valid token */
 async function verifyToken(req) {
   const bearerHeader = req.headers['authorization']
   const bearerToken = bearerHeader?.split(' ')[1]

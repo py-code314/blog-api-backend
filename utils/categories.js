@@ -1,7 +1,9 @@
+/* -------------------- Prisma -------------------- */
 import { prisma } from '../lib/prisma.js'
+/* -------------------- Errors -------------------- */
 import RecordNotFoundError from '../errors/resource-error.js'
 
-/* Check for valid ids */
+/* Check for valid category ids */
 async function verifyCategoryIds(categories) {
   if (!categories || categories.length === 0) return
 
@@ -20,8 +22,6 @@ async function verifyCategoryIds(categories) {
   } else {
     return true
   }
-
-  
 }
 
 export default verifyCategoryIds

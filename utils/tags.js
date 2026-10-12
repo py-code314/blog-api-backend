@@ -1,7 +1,9 @@
+/* -------------------- Prisma -------------------- */
 import { prisma } from '../lib/prisma.js'
+/* -------------------- Errors -------------------- */
 import RecordNotFoundError from '../errors/resource-error.js'
 
-/* Check for valid ids */
+/* Check for valid tag ids */
 async function verifyTagIds(tags) {
   if (!tags || tags.length === 0) return
 
