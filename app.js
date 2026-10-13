@@ -1,3 +1,4 @@
+/* -------------------- Import packages -------------------- */
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
@@ -37,7 +38,6 @@ app.use('/api/v1/categories', routes.categoriesRouter)
 app.use('/api/v1/tags', routes.tagsRouter)
 app.use('/api/v1/stats', routes.statsRouter)
 app.use('/api/v1/authors', routes.authorsRouter)
-// app.use('/api/v1/comments', routes.commentsRouter)
 
 /**
  * -------------- ERROR HANDLER MIDDLEWARE ----------------
