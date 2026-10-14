@@ -72,7 +72,7 @@ model Post {
 model Category {
   id   Int    @id @default(autoincrement())
   name String
-  slug String @unique
+  slug String 
 
   // Metadata
   createdAt DateTime @default(now())
@@ -84,6 +84,7 @@ model Category {
   posts  Post[]
 
   @@unique([name, userId])
+  @@unique([slug, userId])
   @@map("categories")
 }
 
@@ -106,7 +107,7 @@ model Comment {
 
 model Tag {
   id   Int    @id @default(autoincrement())
-  name String @unique
+  name String 
 
   // Metadata
   createdAt DateTime @default(now())
