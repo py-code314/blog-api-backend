@@ -11,9 +11,15 @@ import errorHandler from './middleware/error-handler.js'
  */
 
 const app = express()
-
-// TODO: Change cors set up later in production environment
-app.use(cors()) // Allow CORS
+// Configure CORS
+var corsOptions = {
+  origin: [
+    'https://chicken-run-blog-api-author.netlify.app',
+    'https://chicken-run-blog-api-reader.netlify.app',
+  ],
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions)) // Allow only 2 domains
 // Express middleware
 app.use(express.json()) // To read JSON data from client
 app.use(express.urlencoded({ extended: true })) // To parse URL encoded form data
