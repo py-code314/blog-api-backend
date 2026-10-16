@@ -31,7 +31,9 @@ postsRouter.get('/latest', controllers.getLatestPosts)
 /* These routes are for reader frontend */
 // Get all public posts by author id
 postsRouter.get('/authors/:authorId', controllers.getPostsByAuthorId)
-// Get all public posts by any author by category
+// Get all public posts by any author by category slug
+postsRouter.get('/categories/slug/:categorySlug', controllers.getPostsByCategorySlug)
+// Get all public posts by any author by category id
 postsRouter.get('/categories/:categoryId', controllers.getPostsByCategoryId)
 // Get all public posts by any author by tag name
 postsRouter.get('/tags/name/:tagName', controllers.getPostsByTagName)

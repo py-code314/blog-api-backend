@@ -366,6 +366,36 @@ async function getPostsByCategoryId(req, res, next) {
   }
 }
 
+/* Get posts by category slug */
+async function getPostsByCategorySlug(req, res, next) {
+  try {
+    const categorySlug = req.params.categorySlug
+
+    // Get posts by category slug
+    const posts = await prisma.post.findMany({
+      where: {
+        published: true,
+        categories: {
+          some: {
+            slug: categorySlug,
+          },
+        },
+      },
+      include: { categories: true, comments: true, tags: true },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
+
+    return res.json({
+      success: true,
+      posts,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 /* Get all public posts by tag id */
 async function getPostsByTagId(req, res, next) {
   try {
@@ -664,6 +694,7 @@ export {
   updatePost,
   deletePost,
   getPostsByCategoryId,
+  getPostsByCategorySlug,
   getPostsByTagId,
   getPostsByTagName,
   getPostsByAuthorId,
