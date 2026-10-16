@@ -1,7 +1,4 @@
-import {
-  registerUser,
-  loginUser,
-} from './auth-controller.js'
+import { registerUser, loginUser } from './auth-controller.js'
 import {
   createNewPost,
   getPublicPosts,
@@ -16,6 +13,7 @@ import {
   deletePost,
   getPostsByCategoryId,
   getPostsByTagId,
+  getPostsByTagName,
   getPostsByAuthorId,
 } from './posts-controller.js'
 import {
@@ -85,5 +83,6 @@ export {
   getPostsByCategoryId,
   getAllTags,
   getPostsByTagId,
+  getPostsByTagName,
   getPostsByAuthorId,
 }

@@ -403,6 +403,36 @@ async function getPostsByTagId(req, res, next) {
   }
 }
 
+/* Get all public posts by tag name */
+async function getPostsByTagName(req, res, next) {
+  try {
+    const tagName = req.params.tagName
+
+    // Get posts by tag name
+    const posts = await prisma.post.findMany({
+      where: {
+        published: true,
+        tags: {
+          some: {
+            name: tagName,
+          },
+        },
+      },
+      include: { categories: true, comments: true, tags: true },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    })
+
+    return res.json({
+      success: true,
+      posts,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 /* Get an author post by id published or unpublished */
 async function getAuthorPostById(req, res, next) {
   try {
@@ -635,5 +665,6 @@ export {
   deletePost,
   getPostsByCategoryId,
   getPostsByTagId,
+  getPostsByTagName,
   getPostsByAuthorId,
 }

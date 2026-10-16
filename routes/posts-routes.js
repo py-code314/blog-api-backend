@@ -33,13 +33,15 @@ postsRouter.get('/latest', controllers.getLatestPosts)
 postsRouter.get('/authors/:authorId', controllers.getPostsByAuthorId)
 // Get all public posts by any author by category
 postsRouter.get('/categories/:categoryId', controllers.getPostsByCategoryId)
-// Get all public posts by any author by tag
+// Get all public posts by any author by tag name
+postsRouter.get('/tags/name/:tagName', controllers.getPostsByTagName)
+// Get all public posts by any author by tag id
 postsRouter.get('/tags/:tagId', controllers.getPostsByTagId)
 
 /* Get a specific post */
-// For author frontend 
+// For author frontend
 postsRouter.get('/me/:postId', isAuth, controllers.getAuthorPostById)
-// For reader frontend 
+// For reader frontend
 postsRouter.get('/:postId', controllers.getPublicPostById)
 
 /* For author frontend */
